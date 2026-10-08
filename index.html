@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fifty-Fifty</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fifty-Fifty">
+<meta name="theme-color" content="#E8EDF1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1820" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E8EDF1; --surface:#FFFFFF; --ink:#16232E; --muted:#5B6B78; --line:#CBD5DD;
+  --plus:#1F7A5A; --minus:#B83A52; --accent:#1F4FD1; --accent-ink:#FFFFFF;
+  --font:"Familjen Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0F1820; --surface:#18242E; --ink:#E6EDF2; --muted:#93A3B0; --line:#2A3A47;
+    --plus:#4CC395; --minus:#F07D93; --accent:#7A9BFF; --accent-ink:#0F1820;
+  }
+}
+*{box-sizing:border-box}
+html{height:100%}
+body{
+  margin:0; min-height:100%; background:var(--bg); color:var(--ink);
+  font-family:var(--font); font-size:17px; line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+  padding:env(safe-area-inset-top,0px) 0 calc(96px + env(safe-area-inset-bottom,0px));
+}
+#app{max-width:560px; margin:0 auto; padding:20px}
+h1,h2{margin:0; line-height:1.1}
+h1{font-size:2.2rem; font-weight:700; letter-spacing:-0.02em}
+h2{font-size:1.15rem; font-weight:600; margin-bottom:12px}
+a{color:var(--accent)}
+.num{font-variant-numeric:tabular-nums}
+
+button,input,select,textarea{font:inherit; color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent); outline-offset:2px}
+label{display:block; font-size:.9rem; color:var(--muted); margin-bottom:14px}
+input,select,textarea{
+  display:block; width:100%; margin-top:6px; padding:12px 14px;
+  background:var(--bg); border:1.5px solid var(--line); border-radius:12px; color:var(--ink);
+}
+input:focus,select:focus,textarea:focus{border-color:var(--accent); outline:none}
+textarea{resize:vertical}
+
+.primary{
+  background:var(--accent); color:var(--accent-ink); border:0; border-radius:999px;
+  padding:14px 22px; font-weight:600; text-decoration:none; display:inline-block;
+}
+.primary:disabled{opacity:.5}
+.ghost{background:transparent; border:1.5px solid var(--line); border-radius:999px; padding:9px 16px; font-weight:500}
+.danger{background:transparent; border:0; color:var(--minus); font-weight:600; padding:10px 4px; margin-right:auto}
+
+.block{background:var(--surface); border-radius:20px; padding:20px; margin-top:20px}
+
+/* Home */
+.home-head{padding:24px 0 4px}
+.home-head h1{font-size:3rem}
+.home-head p{color:var(--muted); max-width:34ch; margin:10px 0 0}
+.groups{list-style:none; margin:0; padding:0}
+.groups a{display:block; padding:14px 0; border-top:1px solid var(--line); text-decoration:none; color:var(--ink); font-weight:500}
+.groups li:first-child a{border-top:0}
+
+/* Group */
+.back{text-decoration:none; font-weight:500; display:inline-block; padding:4px 0 12px}
+.sub{color:var(--muted); margin:6px 0 0}
+.mine{margin:22px 0 4px}
+.mine .big{font-size:2.6rem; font-weight:700; letter-spacing:-0.02em; line-height:1}
+.mine .lbl{color:var(--muted); font-size:.95rem; margin-top:4px}
+.plus{color:var(--plus)} .minus{color:var(--minus)}
+.row{display:flex; gap:12px; align-items:flex-end; margin-top:18px}
+.row label{margin:0; flex:1}
+.row select{padding:9px 12px}
+
+.tabs{display:flex; gap:24px; margin:24px 0 8px; border-bottom:1.5px solid var(--line)}
+.tabs button{background:none; border:0; padding:10px 0; color:var(--muted); font-weight:600; border-bottom:3px solid transparent; margin-bottom:-1.5px}
+.tabs button[aria-selected="true"]{color:var(--ink); border-color:var(--ink)}
+
+.list{list-style:none; margin:0; padding:0}
+.day{color:var(--muted); font-size:.85rem; padding:18px 0 6px}
+.item{
+  display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+  background:var(--surface); border:0; border-radius:14px; padding:14px 16px; margin-bottom:6px;
+}
+.item .txt{flex:1; min-width:0}
+.item strong{display:block; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.item small{display:block; color:var(--muted); font-size:.85rem}
+.item .amt{font-weight:600; font-variant-numeric:tabular-nums; white-space:nowrap}
+.item.pay{background:transparent; border:1.5px dashed var(--line)}
+
+.bal{display:grid; grid-template-columns:minmax(70px,1fr) 2fr auto; gap:10px; align-items:center; padding:10px 0}
+.bal .name{font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.bal .amt{font-weight:600; font-variant-numeric:tabular-nums; text-align:right; min-width:84px}
+.bar{display:grid; grid-template-columns:1fr 1fr; height:14px; border-left:0}
+.bar .l{display:flex; justify-content:flex-end; border-right:2px solid var(--ink)}
+.bar span{display:block; height:100%; border-radius:4px}
+.bar .l span{background:var(--minus); border-radius:4px 0 0 4px}
+.bar .r span{background:var(--plus); border-radius:0 4px 4px 0}
+
+.settle{list-style:none; margin:0; padding:0}
+.settle li{display:flex; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--line)}
+.settle li:first-child{border-top:0}
+.settle .txt{flex:1}
+.settle .ghost{padding:7px 14px; font-size:.9rem}
+
+.inline{display:flex; gap:10px}
+.inline input{margin:0}
+.inline button{flex-shrink:0}
+
+.empty{text-align:center; color:var(--muted); padding:48px 12px}
+.empty .primary{margin-top:16px}
+.loading{color:var(--muted); padding:48px 0; text-align:center}
+
+.fab{
+  position:fixed; left:50%; transform:translateX(-50%);
+  bottom:calc(18px + env(safe-area-inset-bottom,0px));
+  width:min(520px, calc(100% - 40px)); padding:16px; font-size:1.05rem;
+  box-shadow:0 8px 24px -8px var(--accent);
+}
+
+/* Sheet */
+dialog{
+  border:0; padding:0; background:var(--surface); color:var(--ink);
+  width:100%; max-width:560px; max-height:92vh; margin:auto auto 0;
+  border-radius:24px 24px 0 0; overflow:auto;
+}
+@media (min-width:640px){ dialog{margin:auto; border-radius:24px} }
+dialog::backdrop{background:rgba(10,20,30,.45)}
+dialog[open]{animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(24px); opacity:0}}
+@media (prefers-reduced-motion:reduce){ dialog[open]{animation:none} }
+#expForm{padding:24px 20px calc(20px + env(safe-area-inset-bottom,0px))}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+fieldset{border:0; padding:0; margin:4px 0 0}
+legend{font-size:.9rem; color:var(--muted); margin-bottom:8px; padding:0}
+.seg{display:inline-flex; background:var(--bg); border-radius:999px; padding:4px; margin-bottom:10px}
+.seg button{border:0; background:transparent; padding:8px 16px; border-radius:999px; font-weight:600; color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface); color:var(--ink)}
+.srow{display:flex; align-items:center; gap:12px; margin:0; padding:9px 0; color:var(--ink); font-size:1rem; border-top:1px solid var(--line)}
+.srow:first-child{border-top:0}
+.srow span:first-of-type{flex:1}
+.srow input[type=checkbox]{width:22px; height:22px; margin:0; accent-color:var(--accent); flex-shrink:0}
+.srow input[inputmode]{width:110px; margin:0; padding:8px 10px; text-align:right}
+.srow .amt{color:var(--muted); font-variant-numeric:tabular-nums}
+.hint{font-size:.9rem; color:var(--muted); margin:8px 0 0}
+.err{color:var(--minus); font-weight:500; min-height:1.2em; margin:12px 0 0}
+.actions{display:flex; gap:10px; justify-content:flex-end; align-items:center; margin-top:16px}
+
+#toast{
+  position:fixed; left:50%; bottom:calc(90px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%);
+  background:var(--ink); color:var(--bg); padding:10px 18px; border-radius:999px; font-weight:500;
+  opacity:0; pointer-events:none; transition:opacity .2s; max-width:calc(100% - 40px); text-align:center;
+}
+#toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div id="app"><p class="loading">Lade …</p></div>
+
+<dialog id="sheet" aria-labelledby="sheetTitle">
+  <form id="expForm" novalidate>
+    <h2 id="sheetTitle">Neue Ausgabe</h2>
+    <label>Wofür?<input name="desc" required maxlength="80" placeholder="z. B. Einkauf Supermarkt" autocomplete="off"></label>
+    <div class="two">
+      <label>Betrag in €<input name="amount" inputmode="decimal" required placeholder="0,00" autocomplete="off"></label>
+      <label>Datum<input type="date" name="date" required></label>
+    </div>
+    <label>Bezahlt von<select name="paidBy"></select></label>
+    <fieldset>
+      <legend>Aufteilen auf</legend>
+      <div class="seg" role="group" aria-label="Art der Aufteilung">
+        <button type="button" data-mode="equal">Gleichmäßig</button>
+        <button type="button" data-mode="exact">Eigene Beträge</button>
+      </div>
+      <div id="splitRows"></div>
+      <p id="splitHint" class="hint"></p>
+    </fieldset>
+    <p id="formErr" class="err" role="alert"></p>
+    <div class="actions">
+      <button type="button" id="del" class="danger">Löschen</button>
+      <button type="button" id="cancel" class="ghost">Abbrechen</button>
+      <button type="submit" id="save" class="primary">Speichern</button>
+    </div>
+  </form>
+</dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ============================================================
+   HIER DEINE FIREBASE-KONFIGURATION EINFÜGEN
+   (Firebase-Konsole → Projekteinstellungen → Deine Apps → Konfiguration)
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyAQAVLWcCg9u4At21_1rEmxFO2V-TI7PLg",
+  authDomain: "fifty-fifty-dca72.firebaseapp.com",
+  projectId: "fifty-fifty-dca72",
+  storageBucket: "fifty-fifty-dca72.firebasestorage.app",
+  messagingSenderId: "482629085842",
+  appId: "1:482629085842:web:73015a776ffb66ca60d44b"
+};
+/* ============================================================ */
+
+const configured = !firebaseConfig.apiKey.startsWith("HIER");
+let db = null;
+if (configured) {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+  db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+}
+
+/* ---------- Helfer ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const fmt = c => (c / 100).toLocaleString("de-DE", { style: "currency", currency: "EUR" });
+const toCents = v => {
+  const s = String(v).trim().replace(/\s|€/g, "").replace(/\.(?=\d{3}(\D|$))/g, "").replace(",", ".");
+  if (s === "") return 0;
+  const n = Number(s);
+  return isFinite(n) ? Math.round(n * 100) : NaN;
+};
+const centsToInput = c => (c / 100).toFixed(2).replace(".", ",");
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
+const fmtDate = d => d ? new Date(d + "T00:00").toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" }) : "";
+const randomId = () => { const a = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"; return Array.from(crypto.getRandomValues(new Uint8Array(20)), b => a[b % a.length]).join(""); };
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+let toastTimer;
+function toast(msg) {
+  const t = $("#toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+}
+function showError(err) {
+  console.error(err);
+  toast(err && err.code === "permission-denied"
+    ? "Zugriff verweigert. Prüfe die Firestore-Regeln."
+    : "Verbindung fehlgeschlagen. Prüfe dein Internet.");
+}
+
+/* ---------- Zustand & Routing ---------- */
+const state = { gid: null, group: null, expenses: [], tab: "ausgaben", unsub: [] };
+const groupRef = () => db.collection("groups").doc(state.gid);
+const expRef = () => groupRef().collection("expenses");
+
+function route() {
+  state.unsub.forEach(u => u()); state.unsub = [];
+  if (!configured) return renderSetup();
+  const m = location.hash.match(/g=([A-Za-z0-9]+)/);
+  if (m) openGroup(m[1]); else renderHome();
+}
+window.addEventListener("hashchange", route);
+
+function renderSetup() {
+  $("#app").innerHTML = `<div class="empty"><h1>Fast fertig</h1>
+    <p>Die App ist noch nicht mit Firebase verbunden. Öffne die Datei <strong>index.html</strong> und trage oben im Skript deine Firebase-Konfiguration ein.</p></div>`;
+}
+
+/* ---------- Startseite ---------- */
+function renderHome() {
+  document.title = "Fifty-Fifty";
+  const recent = store.get("recent", []);
+  $("#app").innerHTML = `
+    <header class="home-head">
+      <h1>Fifty-Fifty</h1>
+      <p>Gemeinsame Ausgaben eintragen. Die App rechnet aus, wer wem wie viel schuldet.</p>
+    </header>
+    ${recent.length ? `<section class="block"><h2>Deine Gruppen</h2><ul class="groups">
+      ${recent.map(g => `<li><a href="#g=${g.id}">${esc(g.name)}</a></li>`).join("")}</ul></section>` : ""}
+    <section class="block">
+      <h2>Gruppe beitreten</h2>
+      <form id="joinGroup" class="inline">
+        <input name="link" placeholder="Gruppen-Link einfügen" aria-label="Gruppen-Link" autocomplete="off">
+        <button class="primary" type="submit">Beitreten</button>
+      </form>
+      <p class="err" id="jgErr" role="alert"></p>
+    </section>
+    <section class="block">
+      <h2>Neue Gruppe</h2>
+      <form id="newGroup">
+        <label>Name der Gruppe<input name="name" required maxlength="60" placeholder="z. B. Urlaub Kroatien"></label>
+        <label>Wer ist dabei?<textarea name="members" rows="4" required placeholder="Ein Name pro Zeile"></textarea></label>
+        <p class="err" id="ngErr" role="alert"></p>
+        <button class="primary" type="submit">Gruppe erstellen</button>
+      </form>
+    </section>`;
+  $("#joinGroup").onsubmit = e => {
+    e.preventDefault();
+    const v = e.target.link.value.trim();
+    const m = v.match(/g=([A-Za-z0-9]+)/) || v.match(/^([A-Za-z0-9]{20})$/);
+    if (!m) return $("#jgErr").textContent = "Füge den kompletten Link ein, den du bekommen hast.";
+    location.hash = "g=" + m[1];
+  };
+  $("#newGroup").onsubmit = async e => {
+    e.preventDefault();
+    const f = e.target;
+    const name = f.name.value.trim();
+    const members = [...new Set(f.members.value.split(/[\n,]/).map(s => s.trim()).filter(Boolean))];
+    if (!name) return $("#ngErr").textContent = "Gib der Gruppe einen Namen.";
+    if (members.length < 2) return $("#ngErr").textContent = "Trag mindestens zwei Personen ein.";
+    const btn = f.querySelector("button"); btn.disabled = true;
+    const id = randomId();
+    try {
+      await db.collection("groups").doc(id).set({ name, members, createdAt: Date.now() });
+      location.hash = "g=" + id;
+    } catch (err) { showError(err); btn.disabled = false; }
+  };
+}
+
+function remember(id, name) {
+  const list = store.get("recent", []).filter(g => g.id !== id);
+  list.unshift({ id, name });
+  store.set("recent", list.slice(0, 12));
+}
+
+/* ---------- Gruppe ---------- */
+function openGroup(id) {
+  state.gid = id; state.group = null; state.expenses = [];
+  $("#app").innerHTML = `<p class="loading">Lade Gruppe …</p>`;
+  state.unsub.push(groupRef().onSnapshot(snap => {
+    if (!snap.exists) {
+      $("#app").innerHTML = `<div class="empty"><p>Diese Gruppe wurde nicht gefunden. Prüfe, ob der Link vollständig ist.</p><a class="primary" href="#">Zur Startseite</a></div>`;
+      return;
+    }
+    state.group = snap.data();
+    remember(id, state.group.name);
+    renderGroup();
+  }, showError));
+  state.unsub.push(expRef().orderBy("createdAt", "desc").onSnapshot(qs => {
+    state.expenses = qs.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (state.group) renderGroup();
+  }, showError));
+}
+
+function balances() {
+  const b = {};
+  state.group.members.forEach(m => b[m] = 0);
+  for (const e of state.expenses) {
+    b[e.paidBy] = (b[e.paidBy] || 0) + e.amount;
+    for (const s of e.shares) b[s.m] = (b[s.m] || 0) - s.c;
+  }
+  return b;
+}
+
+// Schulden vereinfachen: möglichst wenige Überweisungen
+function settle(b) {
+  const cred = [], debt = [];
+  for (const [m, v] of Object.entries(b)) { if (v > 0) cred.push({ m, v }); else if (v < 0) debt.push({ m, v: -v }); }
+  cred.sort((a, b) => b.v - a.v); debt.sort((a, b) => b.v - a.v);
+  const out = []; let i = 0, j = 0;
+  while (i < debt.length && j < cred.length) {
+    const x = Math.min(debt[i].v, cred[j].v);
+    out.push({ from: debt[i].m, to: cred[j].m, amount: x });
+    debt[i].v -= x; cred[j].v -= x;
+    if (!debt[i].v) i++;
+    if (!cred[j].v) j++;
+  }
+  return out;
+}
+
+function renderGroup() {
+  const g = state.group;
+  document.title = g.name + " – Fifty-Fifty";
+  const meKey = "me:" + state.gid;
+  let me = store.get(meKey, "");
+  if (me && !g.members.includes(me)) me = "";
+  const b = balances();
+  const total = state.expenses.filter(e => e.kind !== "payment").reduce((s, e) => s + e.amount, 0);
+
+  let mine = "";
+  if (me) {
+    const v = b[me] || 0;
+    mine = `<div class="mine">
+      <div class="big num ${v > 0 ? "plus" : v < 0 ? "minus" : ""}">${fmt(Math.abs(v))}</div>
+      <div class="lbl">${v > 0 ? "bekommst du insgesamt zurück" : v < 0 ? "schuldest du insgesamt" : "Du bist ausgeglichen"}</div>
+    </div>`;
+  }
+
+  $("#app").innerHTML = `
+    <header>
+      <a href="#" class="back">‹ Alle Gruppen</a>
+      <h1>${esc(g.name)}</h1>
+      <p class="sub">${g.members.length} Personen, <span class="num">${fmt(total)}</span> ausgegeben</p>
+      ${mine}
+      <div class="row">
+        <label>Ich bin
+          <select id="me"><option value="">Bitte wählen</option>
+          ${g.members.map(m => `<option value="${esc(m)}" ${m === me ? "selected" : ""}>${esc(m)}</option>`).join("")}</select>
+        </label>
+        <button id="share" class="ghost" type="button">Link teilen</button>
+      </div>
+    </header>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="ausgaben" aria-selected="${state.tab === "ausgaben"}">Ausgaben</button>
+      <button role="tab" data-tab="salden" aria-selected="${state.tab === "salden"}">Salden</button>
+    </nav>
+    <main>${state.tab === "ausgaben" ? renderExpenses() : renderBalances(b)}</main>
+    <button class="fab primary" id="add" type="button">Ausgabe hinzufügen</button>`;
+
+  $("#me").onchange = e => { store.set(meKey, e.target.value); renderGroup(); };
+  $("#share").onclick = shareLink;
+  $("#add").onclick = () => openSheet();
+  document.querySelectorAll(".tabs button").forEach(t => t.onclick = () => { state.tab = t.dataset.tab; renderGroup(); });
+  document.querySelectorAll(".item").forEach(el => el.onclick = () => {
+    const e = state.expenses.find(x => x.id === el.dataset.id);
+    if (!e) return;
+    if (e.kind === "payment") {
+      if (confirm(`Rückzahlung von ${e.paidBy} an ${e.shares[0].m} (${fmt(e.amount)}) löschen?`))
+        expRef().doc(e.id).delete().then(() => toast("Rückzahlung gelöscht")).catch(showError);
+    } else openSheet(e);
+  });
+  document.querySelectorAll("[data-settle]").forEach(btn => btn.onclick = () => {
+    const s = settle(b)[+btn.dataset.settle];
+    if (!s || !confirm(`Hat ${s.from} ${fmt(s.amount)} an ${s.to} überwiesen?`)) return;
+    expRef().add({
+      kind: "payment", desc: "Rückzahlung", amount: s.amount, date: today(),
+      paidBy: s.from, shares: [{ m: s.to, c: s.amount }], createdAt: Date.now()
+    }).then(() => toast("Als bezahlt markiert")).catch(showError);
+  });
+  const am = $("#addMember");
+  if (am) am.onsubmit = e => {
+    e.preventDefault();
+    const name = e.target.name.value.trim();
+    if (!name) return;
+    if (g.members.includes(name)) return toast(`${name} ist schon in der Gruppe`);
+    groupRef().update({ members: firebase.firestore.FieldValue.arrayUnion(name) })
+      .then(() => toast(`${name} hinzugefügt`)).catch(showError);
+  };
+}
+
+function renderExpenses() {
+  if (!state.expenses.length)
+    return `<div class="empty"><p>Noch keine Ausgaben. Trag die erste ein, zum Beispiel den Einkauf oder die Tankfüllung.</p></div>`;
+  const all = state.group.members.length;
+  const sorted = [...state.expenses].sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.createdAt - a.createdAt);
+  let html = `<ul class="list">`, last = null;
+  for (const e of sorted) {
+    if (e.date !== last) { html += `<li class="day">${fmtDate(e.date)}</li>`; last = e.date; }
+    if (e.kind === "payment") {
+      html += `<li><button class="item pay" data-id="${e.id}"><span class="txt"><strong>${esc(e.paidBy)} hat ${esc(e.shares[0].m)} Geld zurückgezahlt</strong></span><span class="amt">${fmt(e.amount)}</span></button></li>`;
+    } else {
+      const who = e.shares.length === all ? "alle" : e.shares.map(s => s.m).join(", ");
+      html += `<li><button class="item" data-id="${e.id}"><span class="txt"><strong>${esc(e.desc)}</strong><small>${esc(e.paidBy)} hat bezahlt, für ${esc(who)}</small></span><span class="amt">${fmt(e.amount)}</span></button></li>`;
+    }
+  }
+  return html + `</ul>`;
+}
+
+function renderBalances(b) {
+  const vals = Object.values(b);
+  const max = Math.max(1, ...vals.map(Math.abs));
+  const rows = Object.entries(b).sort((x, y) => y[1] - x[1]).map(([m, v]) => {
+    const pct = Math.round(Math.abs(v) / max * 100);
+    return `<div class="bal">
+      <span class="name">${esc(m)}</span>
+      <span class="bar" aria-hidden="true">
+        <span class="l">${v < 0 ? `<span style="width:${pct}%"></span>` : ""}</span>
+        <span class="r">${v > 0 ? `<span style="width:${pct}%"></span>` : ""}</span>
+      </span>
+      <span class="amt ${v > 0 ? "plus" : v < 0 ? "minus" : ""}">${v > 0 ? "+" : v < 0 ? "−" : ""}${fmt(Math.abs(v))}</span>
+    </div>`;
+  }).join("");
+  const plan = settle(b);
+  return `
+    <section class="block">${rows}</section>
+    <section class="block">
+      <h2>So wird ausgeglichen</h2>
+      ${plan.length ? `<ul class="settle">${plan.map((s, i) => `<li>
+        <span class="txt"><strong>${esc(s.from)}</strong> zahlt <strong>${esc(s.to)}</strong> <span class="num">${fmt(s.amount)}</span></span>
+        <button class="ghost" type="button" data-settle="${i}">Erledigt</button></li>`).join("")}</ul>`
+        : `<p class="sub">Alle sind quitt. Es muss niemand etwas überweisen.</p>`}
+    </section>
+    <section class="block">
+      <h2>Person hinzufügen</h2>
+      <form id="addMember" class="inline"><input name="name" maxlength="40" placeholder="Name" aria-label="Name"><button class="primary" type="submit">Hinzufügen</button></form>
+    </section>`;
+}
+
+async function shareLink() {
+  const url = location.href;
+  if (navigator.share) {
+    try { await navigator.share({ title: state.group.name, text: `Trag deine Ausgaben für „${state.group.name}“ hier ein:`, url }); } catch {}
+  } else {
+    try { await navigator.clipboard.writeText(url); toast("Link kopiert"); }
+    catch { prompt("Diesen Link an deine Freunde schicken:", url); }
+  }
+}
+
+/* ---------- Ausgabe anlegen / bearbeiten ---------- */
+const dlg = $("#sheet"), F = $("#expForm");
+let sheet = null;
+
+function openSheet(e) {
+  const g = state.group;
+  const me = store.get("me:" + state.gid, "");
+  sheet = {
+    editId: e ? e.id : null, createdAt: e ? e.createdAt : null,
+    mode: e && e.splitMode === "exact" ? "exact" : "equal",
+    sel: new Set(e ? e.shares.map(s => s.m) : g.members), exact: {}
+  };
+  if (e && e.splitMode === "exact") e.shares.forEach(s => sheet.exact[s.m] = centsToInput(s.c));
+  F.desc.value = e ? e.desc : "";
+  F.amount.value = e ? centsToInput(e.amount) : "";
+  F.date.value = e ? e.date : today();
+  const payer = e ? e.paidBy : (g.members.includes(me) ? me : g.members[0]);
+  F.paidBy.innerHTML = g.members.map(m => `<option value="${esc(m)}" ${m === payer ? "selected" : ""}>${esc(m)}</option>`).join("");
+  $("#sheetTitle").textContent = e ? "Ausgabe bearbeiten" : "Neue Ausgabe";
+  $("#del").hidden = !e;
+  $("#formErr").textContent = "";
+  $("#save").disabled = false;
+  setMode(sheet.mode);
+  dlg.showModal();
+  if (!e) setTimeout(() => F.desc.focus(), 50);
+}
+
+function setMode(mode) {
+  sheet.mode = mode;
+  document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === mode));
+  renderSplit();
+}
+
+function renderSplit() {
+  const members = state.group.members;
+  const amount = toCents(F.amount.value) || 0;
+  if (sheet.mode === "equal") {
+    const n = members.filter(m => sheet.sel.has(m)).length;
+    $("#splitRows").innerHTML = members.map(m => `<label class="srow">
+      <input type="checkbox" data-m="${esc(m)}" ${sheet.sel.has(m) ? "checked" : ""}>
+      <span>${esc(m)}</span>
+      <span class="amt">${sheet.sel.has(m) && amount > 0 && n ? fmt(Math.round(amount / n)) : ""}</span></label>`).join("");
+  } else {
+    $("#splitRows").innerHTML = members.map(m => `<label class="srow">
+      <span>${esc(m)}</span>
+      <input inputmode="decimal" data-m="${esc(m)}" value="${esc(sheet.exact[m] || "")}" placeholder="0,00" autocomplete="off"></label>`).join("");
+  }
+  updateHint();
+}
+
+function updateHint() {
+  const amount = toCents(F.amount.value) || 0;
+  const h = $("#splitHint");
+  if (sheet.mode === "equal") {
+    const n = state.group.members.filter(m => sheet.sel.has(m)).length;
+    h.textContent = n ? `Wird auf ${n} ${n === 1 ? "Person" : "Personen"} aufgeteilt.` : "Wähle mindestens eine Person aus.";
+  } else {
+    const sum = state.group.members.reduce((s, m) => s + (toCents(sheet.exact[m] || "") || 0), 0);
+    const diff = amount - sum;
+    h.textContent = diff === 0 ? `Passt genau: ${fmt(sum)} verteilt.`
+      : diff > 0 ? `Noch ${fmt(diff)} zu verteilen.` : `${fmt(-diff)} zu viel verteilt.`;
+  }
+}
+
+document.querySelectorAll(".seg button").forEach(b => b.onclick = () => setMode(b.dataset.mode));
+F.amount.addEventListener("input", () => sheet.mode === "equal" ? renderSplit() : updateHint());
+$("#splitRows").addEventListener("input", e => {
+  const m = e.target.dataset.m;
+  if (m == null) return;
+  if (e.target.type === "checkbox") { e.target.checked ? sheet.sel.add(m) : sheet.sel.delete(m); renderSplit(); }
+  else { sheet.exact[m] = e.target.value; updateHint(); }
+});
+$("#cancel").onclick = () => dlg.close();
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+$("#del").onclick = () => {
+  if (!sheet.editId || !confirm("Diese Ausgabe löschen?")) return;
+  expRef().doc(sheet.editId).delete().then(() => toast("Ausgabe gelöscht")).catch(showError);
+  dlg.close();
+};
+
+F.onsubmit = async e => {
+  e.preventDefault();
+  const err = msg => { $("#formErr").textContent = msg; };
+  const desc = F.desc.value.trim();
+  const amount = toCents(F.amount.value);
+  const members = state.group.members;
+  if (!desc) return err("Wofür war die Ausgabe?");
+  if (!(amount > 0)) return err("Gib einen gültigen Betrag ein, z. B. 12,50.");
+  if (!F.date.value) return err("Wähle ein Datum.");
+
+  let shares;
+  if (sheet.mode === "equal") {
+    const sel = members.filter(m => sheet.sel.has(m));
+    if (!sel.length) return err("Wähle mindestens eine Person aus.");
+    const base = Math.floor(amount / sel.length), rest = amount - base * sel.length;
+    shares = sel.map((m, i) => ({ m, c: base + (i < rest ? 1 : 0) }));
+  } else {
+    shares = members.map(m => ({ m, c: toCents(sheet.exact[m] || "") }));
+    if (shares.some(s => isNaN(s.c) || s.c < 0)) return err("Mindestens ein Betrag ist ungültig.");
+    shares = shares.filter(s => s.c > 0);
+    const sum = shares.reduce((s, x) => s + x.c, 0);
+    if (sum !== amount) return err(`Die Einzelbeträge ergeben ${fmt(sum)}, die Ausgabe ist ${fmt(amount)}.`);
+  }
+
+  const data = {
+    kind: "expense", desc, amount, date: F.date.value, paidBy: F.paidBy.value,
+    shares, splitMode: sheet.mode, createdAt: sheet.createdAt || Date.now()
+  };
+  $("#save").disabled = true;
+  try {
+    // Nicht auf den Server warten: Firestore speichert sofort lokal und synchronisiert im Hintergrund.
+    const p = sheet.editId ? expRef().doc(sheet.editId).set(data) : expRef().add(data);
+    p.catch(showError);
+    dlg.close();
+    toast(sheet.editId ? "Änderung gespeichert" : "Ausgabe gespeichert");
+  } catch (x) { showError(x); $("#save").disabled = false; }
+};
+
+route();
+</script>
+</body>
+</html>
