@@ -27,6 +27,7 @@
   }
 }
 *{box-sizing:border-box}
+[hidden]{display:none !important}
 html{height:100%}
 body{
   margin:0; min-height:100%; background:var(--bg); color:var(--ink);
@@ -163,6 +164,49 @@ legend{font-size:.9rem; color:var(--muted); margin-bottom:8px; padding:0}
 }
 #toast.show{opacity:1}
 
+/* Gruppe: Kennzahlen, Status, Verlauf */
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:18px}
+.stat{background:var(--surface); border-radius:14px; padding:10px 10px 11px; min-width:0}
+.stat small{display:block; color:var(--muted); font-size:.8rem}
+.stat b{display:block; font-size:clamp(.95rem, 4vw, 1.1rem); font-weight:700; font-variant-numeric:tabular-nums; margin-top:2px; line-height:1.25; overflow-wrap:anywhere}
+.banner{border-radius:14px; padding:12px 14px; margin-top:16px; font-weight:500; font-size:.95rem}
+.banner.ok{background:color-mix(in srgb, var(--plus) 14%, transparent); color:var(--plus)}
+.banner.warn{background:color-mix(in srgb, var(--minus) 12%, transparent); color:var(--minus)}
+.who{background:var(--surface); border-radius:16px; padding:16px; margin-top:16px}
+.who p{margin:0 0 10px}
+.who .sub{margin:12px 0 0}
+.chips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{border:1.5px solid var(--line); background:var(--bg); border-radius:999px; padding:9px 18px; font-weight:600}
+.linkbtn{background:none; border:0; padding:0; color:var(--link); font-weight:600; text-decoration:underline; text-underline-offset:3px}
+.badge{display:inline-block; font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:999px; background:var(--accent); color:var(--accent-ink); vertical-align:middle; margin-left:8px}
+.dot{display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--minus); margin-left:8px; vertical-align:middle}
+.groups small{display:block; color:var(--muted); font-size:.85rem; font-weight:400; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.prow{display:grid; grid-template-columns:1fr auto; gap:2px 12px; padding:12px 0; border-top:1px solid var(--line)}
+.prow:first-of-type{border-top:0}
+.pname{font-weight:600}
+.pnums{grid-column:1; color:var(--muted); font-size:.88rem; display:flex; gap:14px; flex-wrap:wrap}
+.pnums b{color:var(--ink); font-weight:600; font-variant-numeric:tabular-nums}
+.pbal{grid-row:1 / span 2; grid-column:2; align-self:center; font-weight:700; font-variant-numeric:tabular-nums}
+.loglist{list-style:none; margin:0; padding:0}
+.loglist li{display:flex; gap:12px; align-items:center; padding:10px 0; border-top:1px solid var(--line); font-size:.95rem}
+.loglist li:first-child{border-top:0}
+.loglist li>div{flex:1; min-width:0}
+.loglist small{display:block; color:var(--muted); font-size:.8rem; margin-top:2px}
+.btnrow{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; align-items:center}
+.sm{padding:7px 14px; font-size:.9rem}
+.dangerline{color:var(--minus); border-color:color-mix(in srgb, var(--minus) 45%, transparent)}
+.check{display:flex; align-items:center; gap:10px; color:var(--ink); font-size:.95rem; margin:16px 0 0}
+.check input{width:22px; height:22px; margin:0; accent-color:var(--accent); flex-shrink:0}
+#formFields{border:0; padding:0; margin:0; min-width:0}
+#formFields:disabled input, #formFields:disabled select{opacity:.75}
+.archive summary{cursor:pointer; font-weight:600; font-size:1.15rem; list-style:none}
+.archive summary::-webkit-details-marker{display:none}
+.archive summary::after{content:" ›"; color:var(--muted)}
+.archive[open] summary{margin-bottom:8px}
+.lock{font-size:.75rem; margin-left:6px}
+.settle .plus{font-weight:600; font-size:.9rem}
+
 /* Startbild */
 #splash{
   position:fixed; inset:0; z-index:100; background:#1E2A38; color:#FFC93C;
@@ -199,21 +243,25 @@ legend{font-size:.9rem; color:var(--muted); margin-bottom:8px; padding:0}
 <dialog id="sheet" aria-labelledby="sheetTitle">
   <form id="expForm" novalidate>
     <h2 id="sheetTitle">Neue Ausgabe</h2>
-    <label>Wofür?<input name="desc" required maxlength="80" placeholder="z. B. Einkauf Supermarkt" autocomplete="off"></label>
-    <div class="two">
-      <label>Betrag in €<input name="amount" inputmode="decimal" required placeholder="0,00" autocomplete="off"></label>
-      <label>Datum<input type="date" name="date" required></label>
-    </div>
-    <label>Bezahlt von<select name="paidBy"></select></label>
-    <fieldset>
-      <legend>Aufteilen auf</legend>
-      <div class="seg" role="group" aria-label="Art der Aufteilung">
-        <button type="button" data-mode="equal">Gleichmäßig</button>
-        <button type="button" data-mode="exact">Eigene Beträge</button>
+    <fieldset id="formFields">
+      <label>Wofür?<input name="desc" required maxlength="80" placeholder="z. B. Einkauf Supermarkt" autocomplete="off"></label>
+      <div class="two">
+        <label>Betrag in €<input name="amount" inputmode="decimal" required placeholder="0,00" autocomplete="off"></label>
+        <label>Datum<input type="date" name="date" required></label>
       </div>
-      <div id="splitRows"></div>
-      <p id="splitHint" class="hint"></p>
+      <label>Bezahlt von<select name="paidBy"></select></label>
+      <fieldset>
+        <legend>Aufteilen auf</legend>
+        <div class="seg" role="group" aria-label="Art der Aufteilung">
+          <button type="button" data-mode="equal">Gleichmäßig</button>
+          <button type="button" data-mode="exact">Eigene Beträge</button>
+        </div>
+        <div id="splitRows"></div>
+        <p id="splitHint" class="hint"></p>
+      </fieldset>
+      <label class="check"><input type="checkbox" id="unlock"> Andere dürfen diese Ausgabe bearbeiten</label>
     </fieldset>
+    <p id="ownerInfo" class="hint"></p>
     <p id="formErr" class="err" role="alert"></p>
     <div class="actions">
       <button type="button" id="del" class="danger">Löschen</button>
@@ -258,9 +306,25 @@ if (configured && fbLoaded) {
   db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
 }
 
+const LOGO = `<svg class="logo" viewBox="0 0 200 200" aria-hidden="true">
+        <rect width="200" height="200" fill="#1E2A38"/>
+    <defs><clipPath id="lgl"><rect width="100" height="200"/></clipPath><clipPath id="lgr"><rect x="100" width="100" height="200"/></clipPath></defs>
+    <g clip-path="url(#lgl)">
+      <circle cx="100" cy="100" r="66" fill="#FFC93C"/>
+      <circle cx="100" cy="100" r="55" fill="none" stroke="#D99418" stroke-width="4.5"/>
+      <text x="100" y="103" text-anchor="middle" dominant-baseline="central" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="70" fill="#9A5F05">€</text>
+    </g>
+    <g clip-path="url(#lgr)">
+      <circle cx="100" cy="100" r="66" fill="#9A5F05"/>
+      <circle cx="100" cy="100" r="55" fill="none" stroke="#D99418" stroke-width="4.5"/>
+      <text x="100" y="103" text-anchor="middle" dominant-baseline="central" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="70" fill="#FFC93C">€</text>
+    </g>
+      </svg>`;
+
 /* ---------- Helfer ---------- */
 const $ = s => document.querySelector(s);
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+const $$ = s => document.querySelectorAll(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 const fmt = c => (c / 100).toLocaleString("de-DE", { style: "currency", currency: "EUR" });
 const toCents = v => {
   const s = String(v).trim().replace(/\s|€/g, "").replace(/\.(?=\d{3}(\D|$))/g, "").replace(",", ".");
@@ -271,6 +335,8 @@ const toCents = v => {
 const centsToInput = c => (c / 100).toFixed(2).replace(".", ",");
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
 const fmtDate = d => d ? new Date(d + "T00:00").toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" }) : "";
+const fmtDay = t => t ? new Date(t).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" }) : "";
+const fmtTime = t => t ? new Date(t).toLocaleString("de-DE", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
 const randomId = () => { const a = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"; return Array.from(crypto.getRandomValues(new Uint8Array(20)), b => a[b % a.length]).join(""); };
 const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
@@ -279,7 +345,7 @@ const store = {
 let toastTimer;
 function toast(msg) {
   const t = $("#toast"); t.textContent = msg; t.classList.add("show");
-  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2800);
 }
 function showError(err) {
   console.error(err);
@@ -287,12 +353,39 @@ function showError(err) {
     ? "Zugriff verweigert. Prüfe die Firestore-Regeln."
     : "Verbindung fehlgeschlagen. Prüfe dein Internet.");
 }
+async function shareText(text, title) {
+  if (navigator.share) { try { await navigator.share({ title, text }); } catch {} return; }
+  try { await navigator.clipboard.writeText(text); toast("In die Zwischenablage kopiert"); }
+  catch { prompt("Text zum Kopieren:", text); }
+}
 
-/* ---------- Zustand & Routing ---------- */
-const state = { gid: null, group: null, expenses: [], tab: "ausgaben", unsub: [] };
+/* ---------- Zustand ---------- */
+const state = { gid: null, group: null, expenses: [], log: [], tab: "ausgaben", unsub: [] };
 const groupRef = () => db.collection("groups").doc(state.gid);
 const expRef = () => groupRef().collection("expenses");
+const logRef = () => groupRef().collection("log");
+const meKey = () => "me:" + state.gid;
+const myName = () => { const m = store.get(meKey(), ""); return state.group && state.group.members.includes(m) ? m : ""; };
+const status = () => (state.group && state.group.status) || "open";
+const isOpen = () => status() === "open";
+const ownerOf = e => e.createdBy || e.paidBy;
+const isOwner = e => !!myName() && ownerOf(e) === myName();
+const canEdit = e => isOpen() && !!myName() && (!!e.unlocked || isOwner(e));
+const active = () => state.expenses.filter(e => !e.deleted);
+const totalSpent = () => active().filter(e => e.kind !== "payment").reduce((s, e) => s + e.amount, 0);
 
+// Jede Änderung: Daten + Gruppen-Info ("zuletzt") + Verlaufseintrag in einem Schritt
+function commit(ops, text, groupExtra = {}) {
+  const by = myName();
+  const now = Date.now();
+  const b = db.batch();
+  ops(b);
+  b.update(groupRef(), { ...groupExtra, updatedAt: now, lastEvent: (by ? by + " " : "") + text, lastBy: by });
+  b.set(logRef().doc(), { at: now, by, text });
+  return b.commit().catch(showError);
+}
+
+/* ---------- Routing ---------- */
 function route() {
   state.unsub.forEach(u => u()); state.unsub = [];
   if (!configured) return renderSetup();
@@ -313,28 +406,13 @@ function renderSetup() {
 /* ---------- Startseite ---------- */
 function renderHome() {
   document.title = "Fifty-Fifty";
-  const recent = store.get("recent", []);
   $("#app").innerHTML = `
     <header class="home-head">
-      <svg class="logo" viewBox="0 0 200 200" aria-hidden="true">
-        <rect width="200" height="200" fill="#1E2A38"/>
-    <defs><clipPath id="lgl"><rect width="100" height="200"/></clipPath><clipPath id="lgr"><rect x="100" width="100" height="200"/></clipPath></defs>
-    <g clip-path="url(#lgl)">
-      <circle cx="100" cy="100" r="66" fill="#FFC93C"/>
-      <circle cx="100" cy="100" r="55" fill="none" stroke="#D99418" stroke-width="4.5"/>
-      <text x="100" y="103" text-anchor="middle" dominant-baseline="central" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="70" fill="#9A5F05">€</text>
-    </g>
-    <g clip-path="url(#lgr)">
-      <circle cx="100" cy="100" r="66" fill="#9A5F05"/>
-      <circle cx="100" cy="100" r="55" fill="none" stroke="#D99418" stroke-width="4.5"/>
-      <text x="100" y="103" text-anchor="middle" dominant-baseline="central" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="70" fill="#FFC93C">€</text>
-    </g>
-      </svg>
+      ${LOGO}
       <h1>Fifty-Fifty</h1>
       <p>Gemeinsame Ausgaben eintragen. Die App rechnet aus, wer wem wie viel schuldet.</p>
     </header>
-    ${recent.length ? `<section class="block"><h2>Deine Gruppen</h2><ul class="groups">
-      ${recent.map(g => `<li><a href="#g=${g.id}">${esc(g.name)}</a></li>`).join("")}</ul></section>` : ""}
+    <div id="homeGroups"></div>
     <section class="block">
       <h2>Gruppe beitreten</h2>
       <form id="joinGroup" class="inline">
@@ -352,6 +430,9 @@ function renderHome() {
         <button class="primary" type="submit">Gruppe erstellen</button>
       </form>
     </section>`;
+  drawGroups();
+  refreshGroups();
+
   $("#joinGroup").onsubmit = e => {
     e.preventDefault();
     const v = e.target.link.value.trim();
@@ -367,23 +448,52 @@ function renderHome() {
     if (!name) return $("#ngErr").textContent = "Gib der Gruppe einen Namen.";
     if (members.length < 2) return $("#ngErr").textContent = "Trag mindestens zwei Personen ein.";
     const btn = f.querySelector("button"); btn.disabled = true;
-    const id = randomId();
+    const id = randomId(), now = Date.now();
     try {
-      await db.collection("groups").doc(id).set({ name, members, createdAt: Date.now() });
+      const ref = db.collection("groups").doc(id);
+      await ref.set({ name, members, status: "open", createdAt: now, updatedAt: now, lastEvent: "Gruppe erstellt", lastBy: "" });
+      ref.collection("log").add({ at: now, by: "", text: `Gruppe „${name}“ erstellt mit ${members.join(", ")}` }).catch(() => {});
       location.hash = "g=" + id;
     } catch (err) { showError(err); btn.disabled = false; }
   };
 }
 
-function remember(id, name) {
+function drawGroups() {
+  const box = $("#homeGroups"); if (!box) return;
+  const recent = store.get("recent", []), seen = store.get("seen", {});
+  const st = g => g.status || "open";
+  const item = g => {
+    const isNew = g.updatedAt && g.updatedAt > (seen[g.id] || 0) && g.lastBy !== store.get("me:" + g.id, "");
+    return `<li><a href="#g=${g.id}"><span class="gname">${esc(g.name)}${isNew ? `<span class="dot" title="Neu"></span><span class="sr-only">(neu)</span>` : ""}</span>${g.lastEvent ? `<small>${esc(g.lastEvent)}</small>` : ""}</a></li>`;
+  };
+  const open = recent.filter(g => st(g) === "open"), closed = recent.filter(g => st(g) === "closed"), arch = recent.filter(g => st(g) === "archived");
+  box.innerHTML =
+    (open.length ? `<section class="block"><h2>Deine Gruppen</h2><ul class="groups">${open.map(item).join("")}</ul></section>` : "") +
+    (closed.length ? `<section class="block"><h2>Abgerechnet</h2><ul class="groups">${closed.map(item).join("")}</ul></section>` : "") +
+    (arch.length ? `<details class="block archive"><summary>Archiv (${arch.length})</summary><p class="sub">Gelöschte Gruppen. Du kannst sie ansehen und wiederherstellen.</p><ul class="groups">${arch.map(item).join("")}</ul></details>` : "");
+}
+
+async function refreshGroups() {
+  const recent = store.get("recent", []);
+  if (!recent.length) return;
+  const fresh = await Promise.all(recent.map(g =>
+    db.collection("groups").doc(g.id).get()
+      .then(s => s.exists ? { ...g, ...pick(s.data()) } : null)
+      .catch(() => g)));
+  store.set("recent", fresh.filter(Boolean));
+  if (!location.hash.match(/g=/)) drawGroups();
+}
+const pick = d => ({ name: d.name, status: d.status || "open", updatedAt: d.updatedAt || 0, lastEvent: d.lastEvent || "", lastBy: d.lastBy || "" });
+
+function remember(id, data) {
   const list = store.get("recent", []).filter(g => g.id !== id);
-  list.unshift({ id, name });
-  store.set("recent", list.slice(0, 12));
+  list.unshift({ id, ...pick(data) });
+  store.set("recent", list.slice(0, 40));
 }
 
 /* ---------- Gruppe ---------- */
 function openGroup(id) {
-  state.gid = id; state.group = null; state.expenses = [];
+  state.gid = id; state.group = null; state.expenses = []; state.log = [];
   $("#app").innerHTML = `<p class="loading">Lade Gruppe …</p>`;
   state.unsub.push(groupRef().onSnapshot(snap => {
     if (!snap.exists) {
@@ -391,29 +501,35 @@ function openGroup(id) {
       return;
     }
     state.group = snap.data();
-    remember(id, state.group.name);
+    remember(id, state.group);
     renderGroup();
   }, showError));
   state.unsub.push(expRef().orderBy("createdAt", "desc").onSnapshot(qs => {
     state.expenses = qs.docs.map(d => ({ id: d.id, ...d.data() }));
     if (state.group) renderGroup();
   }, showError));
+  state.unsub.push(logRef().orderBy("at", "desc").limit(200).onSnapshot(qs => {
+    state.log = qs.docs.map(d => d.data());
+    if (state.group && state.tab === "verlauf") renderGroup();
+  }, () => {}));
 }
 
-function balances() {
-  const b = {};
-  state.group.members.forEach(m => b[m] = 0);
-  for (const e of state.expenses) {
-    b[e.paidBy] = (b[e.paidBy] || 0) + e.amount;
-    for (const s of e.shares) b[s.m] = (b[s.m] || 0) - s.c;
+function stats() {
+  const s = {};
+  const get = m => s[m] || (s[m] = { paid: 0, share: 0, sent: 0, recv: 0 });
+  state.group.members.forEach(get);
+  for (const e of active()) {
+    if (e.kind === "payment") { get(e.paidBy).sent += e.amount; e.shares.forEach(x => get(x.m).recv += x.c); }
+    else { get(e.paidBy).paid += e.amount; e.shares.forEach(x => get(x.m).share += x.c); }
   }
-  return b;
+  for (const m in s) s[m].bal = s[m].paid - s[m].share + s[m].sent - s[m].recv;
+  return s;
 }
 
 // Schulden vereinfachen: möglichst wenige Überweisungen
-function settle(b) {
+function settle(st) {
   const cred = [], debt = [];
-  for (const [m, v] of Object.entries(b)) { if (v > 0) cred.push({ m, v }); else if (v < 0) debt.push({ m, v: -v }); }
+  for (const [m, x] of Object.entries(st)) { if (x.bal > 0) cred.push({ m, v: x.bal }); else if (x.bal < 0) debt.push({ m, v: -x.bal }); }
   cred.sort((a, b) => b.v - a.v); debt.sort((a, b) => b.v - a.v);
   const out = []; let i = 0, j = 0;
   while (i < debt.length && j < cred.length) {
@@ -427,131 +543,222 @@ function settle(b) {
 }
 
 function renderGroup() {
-  const g = state.group;
+  const g = state.group, me = myName(), st = stats(), total = totalSpent(), n = g.members.length;
   document.title = g.name + " – Fifty-Fifty";
-  const meKey = "me:" + state.gid;
-  let me = store.get(meKey, "");
-  if (me && !g.members.includes(me)) me = "";
-  const b = balances();
-  const total = state.expenses.filter(e => e.kind !== "payment").reduce((s, e) => s + e.amount, 0);
+  const seen = store.get("seen", {}); seen[state.gid] = Date.now(); store.set("seen", seen);
 
-  let mine = "";
+  const banner = status() === "closed"
+    ? `<div class="banner ok">✓ Abgerechnet am ${fmtDay(g.closedAt)}. Die Gruppe ist schreibgeschützt.</div>`
+    : status() === "archived"
+      ? `<div class="banner warn">Diese Gruppe wurde am ${fmtDay(g.archivedAt)} gelöscht und liegt im Archiv. Du kannst sie dir ansehen oder wiederherstellen.</div>`
+      : "";
+
+  let tiles;
   if (me) {
-    const v = b[me] || 0;
-    mine = `<div class="mine">
-      <div class="big num ${v > 0 ? "plus" : v < 0 ? "minus" : ""}">${fmt(Math.abs(v))}</div>
-      <div class="lbl">${v > 0 ? "bekommst du insgesamt zurück" : v < 0 ? "schuldest du insgesamt" : "Du bist ausgeglichen"}</div>
-    </div>`;
+    const b = st[me].bal;
+    tiles = tile("Gesamt", fmt(total)) + tile("Dein Anteil", fmt(st[me].share)) +
+      tile(b > 0 ? "Du bekommst" : b < 0 ? "Du schuldest" : "Offen", b ? fmt(Math.abs(b)) : "✓ 0,00 €", b > 0 ? "plus" : b < 0 ? "minus" : "");
+  } else {
+    tiles = tile("Gesamt", fmt(total)) + tile("Ø pro Person", fmt(Math.round(total / n))) + tile("Personen", String(n));
   }
 
+  const who = me
+    ? `<p class="sub">Du bist <strong>${esc(me)}</strong> · <button class="linkbtn" id="changeMe" type="button">ändern</button> · <button class="linkbtn" id="share" type="button">Link teilen</button></p>`
+    : `<div class="who"><p><strong>Wer bist du?</strong> Damit siehst du deinen Anteil, und nur du kannst deine eigenen Einträge ändern.</p>
+        <div class="chips">${g.members.map(m => `<button class="chip" type="button" data-me="${esc(m)}">${esc(m)}</button>`).join("")}</div>
+        <p class="sub"><button class="linkbtn" id="share" type="button">Link teilen</button></p></div>`;
+
+  const tabs = [["ausgaben", "Ausgaben"], ["uebersicht", "Übersicht"], ["verlauf", "Verlauf"]];
   $("#app").innerHTML = `
     <header>
       <a href="#" class="back">‹ Alle Gruppen</a>
       <h1>${esc(g.name)}</h1>
-      <p class="sub">${g.members.length} Personen, <span class="num">${fmt(total)}</span> ausgegeben</p>
-      ${mine}
-      <div class="row">
-        <label>Ich bin
-          <select id="me"><option value="">Bitte wählen</option>
-          ${g.members.map(m => `<option value="${esc(m)}" ${m === me ? "selected" : ""}>${esc(m)}</option>`).join("")}</select>
-        </label>
-        <button id="share" class="ghost" type="button">Link teilen</button>
-      </div>
+      ${banner}
+      <div class="stats">${tiles}</div>
+      ${who}
     </header>
     <nav class="tabs" role="tablist">
-      <button role="tab" data-tab="ausgaben" aria-selected="${state.tab === "ausgaben"}">Ausgaben</button>
-      <button role="tab" data-tab="salden" aria-selected="${state.tab === "salden"}">Salden</button>
+      ${tabs.map(([k, l]) => `<button role="tab" data-tab="${k}" aria-selected="${state.tab === k}">${l}</button>`).join("")}
     </nav>
-    <main>${state.tab === "ausgaben" ? renderExpenses() : renderBalances(b)}</main>
-    <button class="fab primary" id="add" type="button">Ausgabe hinzufügen</button>`;
+    <main>${state.tab === "ausgaben" ? renderExpenses() : state.tab === "uebersicht" ? renderOverview(st) : renderLog()}</main>
+    ${isOpen() ? `<button class="fab primary" id="add" type="button">Ausgabe hinzufügen</button>` : ""}`;
+  bindGroup(st);
+}
+const tile = (label, value, cls = "") => `<div class="stat"><small>${label}</small><b class="${cls}">${value}</b></div>`;
 
-  $("#me").onchange = e => { store.set(meKey, e.target.value); renderGroup(); };
-  $("#share").onclick = shareLink;
-  $("#add").onclick = () => openSheet();
-  document.querySelectorAll(".tabs button").forEach(t => t.onclick = () => { state.tab = t.dataset.tab; renderGroup(); });
-  document.querySelectorAll(".item").forEach(el => el.onclick = () => {
+function needMe() {
+  if (myName()) return false;
+  toast("Wähle zuerst oben aus, wer du bist.");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  return true;
+}
+
+function bindGroup(st) {
+  const g = state.group;
+  $$("[data-me]").forEach(b => b.onclick = () => { store.set(meKey(), b.dataset.me); renderGroup(); });
+  const cm = $("#changeMe");
+  if (cm) cm.onclick = () => {
+    if (confirm("Möchtest du wechseln, wer du bist? Danach kannst du nur noch die Einträge der neu gewählten Person ändern.")) { store.set(meKey(), ""); renderGroup(); }
+  };
+  $("#share").onclick = () => shareText(`Trag deine Ausgaben für „${g.name}“ hier ein:\n${location.href}`, g.name);
+  const add = $("#add"); if (add) add.onclick = () => { if (!needMe()) openSheet(); };
+  $$(".tabs button").forEach(t => t.onclick = () => { state.tab = t.dataset.tab; renderGroup(); });
+
+  $$(".item").forEach(el => el.onclick = () => {
     const e = state.expenses.find(x => x.id === el.dataset.id);
     if (!e) return;
-    if (e.kind === "payment") {
-      if (confirm(`Rückzahlung von ${e.paidBy} an ${e.shares[0].m} (${fmt(e.amount)}) löschen?`))
-        expRef().doc(e.id).delete().then(() => toast("Rückzahlung gelöscht")).catch(showError);
-    } else openSheet(e);
+    if (e.kind !== "payment") return openSheet(e);
+    if (!canEdit(e)) return toast(isOpen() ? `Nur ${ownerOf(e)} kann diese Rückzahlung löschen.` : "Die Gruppe ist abgeschlossen.");
+    if (confirm(`Rückzahlung von ${e.paidBy} an ${e.shares[0].m} (${fmt(e.amount)}) löschen?`))
+      commit(b => b.update(expRef().doc(e.id), { deleted: true, deletedAt: Date.now(), deletedBy: myName() }),
+        `hat die Rückzahlung ${e.paidBy} → ${e.shares[0].m} (${fmt(e.amount)}) gelöscht`);
   });
-  document.querySelectorAll("[data-settle]").forEach(btn => btn.onclick = () => {
-    const s = settle(b)[+btn.dataset.settle];
+
+  $$("[data-settle]").forEach(btn => btn.onclick = () => {
+    if (needMe()) return;
+    const s = settle(st)[+btn.dataset.settle];
     if (!s || !confirm(`Hat ${s.from} ${fmt(s.amount)} an ${s.to} überwiesen?`)) return;
-    expRef().add({
-      kind: "payment", desc: "Rückzahlung", amount: s.amount, date: today(),
-      paidBy: s.from, shares: [{ m: s.to, c: s.amount }], createdAt: Date.now()
-    }).then(() => toast("Als bezahlt markiert")).catch(showError);
+    const ref = expRef().doc();
+    commit(b => b.set(ref, {
+      kind: "payment", desc: "Rückzahlung", amount: s.amount, date: today(), paidBy: s.from,
+      shares: [{ m: s.to, c: s.amount }], createdAt: Date.now(), createdBy: myName(), unlocked: false, deleted: false
+    }), `hat ${s.from} → ${s.to} (${fmt(s.amount)}) als bezahlt markiert`).then(() => toast("Als bezahlt markiert"));
   });
+
+  $$("[data-restore]").forEach(btn => btn.onclick = () => {
+    const e = state.expenses.find(x => x.id === btn.dataset.restore);
+    if (!e) return;
+    commit(b => b.update(expRef().doc(e.id), { deleted: false }),
+      `hat ${e.kind === "payment" ? `die Rückzahlung ${e.paidBy} → ${e.shares[0].m}` : `„${e.desc}“`} (${fmt(e.amount)}) wiederhergestellt`)
+      .then(() => toast("Wiederhergestellt"));
+  });
+
   const am = $("#addMember");
   if (am) am.onsubmit = e => {
     e.preventDefault();
+    if (needMe()) return;
     const name = e.target.name.value.trim();
     if (!name) return;
     if (g.members.includes(name)) return toast(`${name} ist schon in der Gruppe`);
-    groupRef().update({ members: firebase.firestore.FieldValue.arrayUnion(name) })
-      .then(() => toast(`${name} hinzugefügt`)).catch(showError);
+    commit(() => {}, `hat ${name} zur Gruppe hinzugefügt`, { members: firebase.firestore.FieldValue.arrayUnion(name) })
+      .then(() => toast(`${name} hinzugefügt`));
   };
+
+  const act = (id, fn) => { const el = $(id); if (el) el.onclick = fn; };
+  act("#summary", () => shareText(summaryText(st), g.name));
+  act("#closeGroup", () => {
+    if (needMe()) return;
+    if (!confirm("Abrechnung abschließen? Danach kann niemand mehr Ausgaben eintragen oder ändern. Du kannst die Gruppe später wieder öffnen.")) return;
+    commit(() => {}, "hat die Abrechnung abgeschlossen", { status: "closed", closedAt: Date.now() })
+      .then(() => toast("Abrechnung abgeschlossen. Teile jetzt die Zusammenfassung mit allen."));
+  });
+  act("#reopenGroup", () => {
+    if (needMe()) return;
+    if (confirm("Gruppe wieder öffnen? Dann können wieder Ausgaben eingetragen werden."))
+      commit(() => {}, "hat die Gruppe wieder geöffnet", { status: "open" });
+  });
+  act("#archiveGroup", () => {
+    if (needMe()) return;
+    if (confirm(`Gruppe „${g.name}“ löschen? Sie verschwindet aus der Liste und wandert ins Archiv. Dort kann sie jeder aus der Gruppe ansehen und wiederherstellen.`))
+      commit(() => {}, "hat die Gruppe gelöscht (Archiv)", { status: "archived", archivedAt: Date.now() })
+        .then(() => { toast("Gruppe ins Archiv verschoben"); location.hash = ""; });
+  });
+  act("#restoreGroup", () => {
+    if (needMe()) return;
+    commit(() => {}, "hat die Gruppe aus dem Archiv wiederhergestellt", { status: "closed" })
+      .then(() => toast("Gruppe wiederhergestellt"));
+  });
 }
 
 function renderExpenses() {
-  if (!state.expenses.length)
-    return `<div class="empty"><p>Noch keine Ausgaben. Trag die erste ein, zum Beispiel den Einkauf oder die Tankfüllung.</p></div>`;
+  const list = active();
+  if (!list.length)
+    return `<div class="empty"><p>${isOpen() ? "Noch keine Ausgaben. Trag die erste ein, zum Beispiel den Einkauf oder die Tankfüllung." : "Keine Ausgaben."}</p></div>`;
   const all = state.group.members.length;
-  const sorted = [...state.expenses].sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.createdAt - a.createdAt);
+  const sorted = [...list].sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.createdAt - a.createdAt);
   let html = `<ul class="list">`, last = null;
   for (const e of sorted) {
     if (e.date !== last) { html += `<li class="day">${fmtDate(e.date)}</li>`; last = e.date; }
+    const lock = isOpen() && myName() && !canEdit(e) ? `<span class="lock" title="Nur ${esc(ownerOf(e))} kann das ändern">🔒</span>` : "";
     if (e.kind === "payment") {
-      html += `<li><button class="item pay" data-id="${e.id}"><span class="txt"><strong>${esc(e.paidBy)} hat ${esc(e.shares[0].m)} Geld zurückgezahlt</strong></span><span class="amt">${fmt(e.amount)}</span></button></li>`;
+      html += `<li><button class="item pay" data-id="${e.id}"><span class="txt"><strong>${esc(e.paidBy)} hat ${esc(e.shares[0].m)} Geld zurückgezahlt${lock}</strong></span><span class="amt">${fmt(e.amount)}</span></button></li>`;
     } else {
       const who = e.shares.length === all ? "alle" : e.shares.map(s => s.m).join(", ");
-      html += `<li><button class="item" data-id="${e.id}"><span class="txt"><strong>${esc(e.desc)}</strong><small>${esc(e.paidBy)} hat bezahlt, für ${esc(who)}</small></span><span class="amt">${fmt(e.amount)}</span></button></li>`;
+      html += `<li><button class="item" data-id="${e.id}"><span class="txt"><strong>${esc(e.desc)}${lock}</strong><small>${esc(e.paidBy)} hat bezahlt, für ${esc(who)}</small></span><span class="amt">${fmt(e.amount)}</span></button></li>`;
     }
   }
   return html + `</ul>`;
 }
 
-function renderBalances(b) {
-  const vals = Object.values(b);
-  const max = Math.max(1, ...vals.map(Math.abs));
-  const rows = Object.entries(b).sort((x, y) => y[1] - x[1]).map(([m, v]) => {
-    const pct = Math.round(Math.abs(v) / max * 100);
-    return `<div class="bal">
-      <span class="name">${esc(m)}</span>
-      <span class="bar" aria-hidden="true">
-        <span class="l">${v < 0 ? `<span style="width:${pct}%"></span>` : ""}</span>
-        <span class="r">${v > 0 ? `<span style="width:${pct}%"></span>` : ""}</span>
-      </span>
-      <span class="amt ${v > 0 ? "plus" : v < 0 ? "minus" : ""}">${v > 0 ? "+" : v < 0 ? "−" : ""}${fmt(Math.abs(v))}</span>
+function renderOverview(st) {
+  const g = state.group, me = myName(), total = totalSpent(), n = g.members.length;
+  const plan = settle(st);
+  const rows = g.members.map(m => {
+    const x = st[m];
+    const cls = x.bal > 0 ? "plus" : x.bal < 0 ? "minus" : "";
+    const bal = x.bal > 0 ? `+${fmt(x.bal)}` : x.bal < 0 ? `−${fmt(-x.bal)}` : "✓";
+    return `<div class="prow">
+      <div class="pname">${esc(m)}${m === me ? `<span class="badge">du</span>` : ""}</div>
+      <div class="pnums"><span>Anteil <b>${fmt(x.share)}</b></span><span>bezahlt <b>${fmt(x.paid)}</b></span></div>
+      <div class="pbal ${cls}" title="${x.bal > 0 ? "bekommt noch" : x.bal < 0 ? "schuldet noch" : "ausgeglichen"}">${bal}</div>
     </div>`;
   }).join("");
-  const plan = settle(b);
+
+  let settleBlock;
+  if (isOpen()) {
+    settleBlock = plan.length
+      ? `<h2>So wird ausgeglichen</h2><ul class="settle">${plan.map((s, i) => `<li>
+          <span class="txt"><strong>${esc(s.from)}</strong> zahlt <strong>${esc(s.to)}</strong> <span class="num">${fmt(s.amount)}</span></span>
+          <button class="ghost sm" type="button" data-settle="${i}">Erledigt</button></li>`).join("")}</ul>
+         <div class="btnrow"><button class="ghost sm" id="summary" type="button">Zwischenstand teilen</button></div>`
+      : `<h2>Alles ausgeglichen</h2><p class="sub">Es ist nichts mehr offen. Schließt die Abrechnung ab, dann bleibt die Endabrechnung so stehen und die Gruppe ist schreibgeschützt.</p>
+         <div class="btnrow"><button class="primary" id="closeGroup" type="button">Abrechnung abschließen</button><button class="ghost sm" id="summary" type="button">Zusammenfassung teilen</button></div>`;
+  } else {
+    const pays = active().filter(e => e.kind === "payment");
+    settleBlock = `<h2>Endabrechnung</h2>
+      ${pays.length ? `<ul class="settle">${pays.map(p => `<li><span class="txt">${esc(p.paidBy)} → ${esc(p.shares[0].m)} <span class="num">${fmt(p.amount)}</span></span><span class="plus">✓ bezahlt</span></li>`).join("")}</ul>` : `<p class="sub">Es waren keine Rückzahlungen nötig.</p>`}
+      <div class="btnrow">
+        <button class="primary" id="summary" type="button">Zusammenfassung teilen</button>
+        ${status() === "closed"
+          ? `<button class="ghost sm" id="reopenGroup" type="button">Wieder öffnen</button><button class="ghost sm dangerline" id="archiveGroup" type="button">Gruppe löschen</button>`
+          : `<button class="ghost sm" id="restoreGroup" type="button">Wiederherstellen</button>`}
+      </div>`;
+  }
+
   return `
-    <section class="block">${rows}</section>
     <section class="block">
-      <h2>So wird ausgeglichen</h2>
-      ${plan.length ? `<ul class="settle">${plan.map((s, i) => `<li>
-        <span class="txt"><strong>${esc(s.from)}</strong> zahlt <strong>${esc(s.to)}</strong> <span class="num">${fmt(s.amount)}</span></span>
-        <button class="ghost" type="button" data-settle="${i}">Erledigt</button></li>`).join("")}</ul>`
-        : `<p class="sub">Alle sind quitt. Es muss niemand etwas überweisen.</p>`}
+      <h2>Wer hat was?</h2>
+      <p class="sub">Gesamt ${fmt(total)} · ${n} Personen · Ø ${fmt(Math.round(total / n))}. Der Anteil berücksichtigt, wer bei welcher Ausgabe dabei war.</p>
+      ${rows}
     </section>
-    <section class="block">
+    <section class="block">${settleBlock}</section>
+    ${isOpen() ? `<section class="block">
       <h2>Person hinzufügen</h2>
       <form id="addMember" class="inline"><input name="name" maxlength="40" placeholder="Name" aria-label="Name"><button class="primary" type="submit">Hinzufügen</button></form>
-    </section>`;
+    </section>` : ""}`;
 }
 
-async function shareLink() {
-  const url = location.href;
-  if (navigator.share) {
-    try { await navigator.share({ title: state.group.name, text: `Trag deine Ausgaben für „${state.group.name}“ hier ein:`, url }); } catch {}
-  } else {
-    try { await navigator.clipboard.writeText(url); toast("Link kopiert"); }
-    catch { prompt("Diesen Link an deine Freunde schicken:", url); }
-  }
+function renderLog() {
+  const del = state.expenses.filter(e => e.deleted);
+  const canRestore = e => isOpen() && !!myName() && (!!e.unlocked || isOwner(e) || e.deletedBy === myName());
+  const label = e => e.kind === "payment" ? `Rückzahlung ${esc(e.paidBy)} → ${esc(e.shares[0].m)}` : esc(e.desc);
+  return (del.length ? `<section class="block"><h2>Gelöschte Einträge</h2><ul class="loglist">${del.map(e => `<li>
+      <div><b>${label(e)}</b> · ${fmt(e.amount)}<small>gelöscht${e.deletedBy ? ` von ${esc(e.deletedBy)}` : ""} ${fmtTime(e.deletedAt)}</small></div>
+      ${canRestore(e) ? `<button class="ghost sm" type="button" data-restore="${e.id}">Zurückholen</button>` : ""}</li>`).join("")}</ul></section>` : "") +
+    `<section class="block"><h2>Verlauf</h2>${state.log.length
+      ? `<ul class="loglist">${state.log.map(l => `<li><div>${l.by ? `<b>${esc(l.by)}</b> ` : ""}${esc(l.text)}<small>${fmtTime(l.at)}</small></div></li>`).join("")}</ul>`
+      : `<p class="sub">Noch keine Einträge. Ab jetzt wird hier jede Änderung festgehalten.</p>`}</section>`;
+}
+
+function summaryText(st) {
+  const g = state.group, total = totalSpent(), plan = settle(st);
+  const L = [`Fifty-Fifty · ${g.name} – ${isOpen() ? "Zwischenstand" : "Endabrechnung"}`, `Gesamtausgaben: ${fmt(total)} (${g.members.length} Personen)`, ""];
+  g.members.forEach(m => L.push(`${m}: Anteil ${fmt(st[m].share)}, bezahlt ${fmt(st[m].paid)}`));
+  L.push("");
+  if (plan.length) { L.push("Noch offen:"); plan.forEach(s => L.push(`• ${s.from} → ${s.to}: ${fmt(s.amount)}`)); }
+  else L.push("✓ Alles ausgeglichen.");
+  L.push("", location.href);
+  return L.join("\n");
 }
 
 /* ---------- Ausgabe anlegen / bearbeiten ---------- */
@@ -559,10 +766,11 @@ const dlg = $("#sheet"), F = $("#expForm");
 let sheet = null;
 
 function openSheet(e) {
-  const g = state.group;
-  const me = store.get("me:" + state.gid, "");
+  const g = state.group, me = myName();
+  const editable = e ? canEdit(e) : isOpen();
+  const owner = e ? isOwner(e) : true;
   sheet = {
-    editId: e ? e.id : null, createdAt: e ? e.createdAt : null,
+    prev: e || null, editable,
     mode: e && e.splitMode === "exact" ? "exact" : "equal",
     sel: new Set(e ? e.shares.map(s => s.m) : g.members), exact: {}
   };
@@ -572,8 +780,18 @@ function openSheet(e) {
   F.date.value = e ? e.date : today();
   const payer = e ? e.paidBy : (g.members.includes(me) ? me : g.members[0]);
   F.paidBy.innerHTML = g.members.map(m => `<option value="${esc(m)}" ${m === payer ? "selected" : ""}>${esc(m)}</option>`).join("");
-  $("#sheetTitle").textContent = e ? "Ausgabe bearbeiten" : "Neue Ausgabe";
-  $("#del").hidden = !e;
+  $("#unlock").checked = !!(e && e.unlocked);
+  $("#unlock").disabled = !owner;
+  $("#formFields").disabled = !editable;
+  $("#sheetTitle").textContent = !e ? "Neue Ausgabe" : editable ? "Ausgabe bearbeiten" : "Ausgabe";
+  $("#ownerInfo").textContent = !e ? "Nur du kannst diese Ausgabe später ändern, außer du gibst sie frei."
+    : !isOpen() ? "Die Gruppe ist abgeschlossen. Einträge können nicht mehr geändert werden."
+    : owner ? `Von dir eingetragen${e.updatedBy ? `, zuletzt geändert von ${e.updatedBy}` : ""}.`
+    : e.unlocked ? `Eingetragen von ${ownerOf(e)}, für alle freigegeben.`
+    : `Eingetragen von ${ownerOf(e)}. Nur ${ownerOf(e)} kann diese Ausgabe ändern oder löschen.`;
+  $("#del").hidden = !e || !editable;
+  $("#save").hidden = !editable;
+  $("#cancel").textContent = editable ? "Abbrechen" : "Schließen";
   $("#formErr").textContent = "";
   $("#save").disabled = false;
   setMode(sheet.mode);
@@ -583,7 +801,7 @@ function openSheet(e) {
 
 function setMode(mode) {
   sheet.mode = mode;
-  document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === mode));
+  $$(".seg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === mode));
   renderSplit();
 }
 
@@ -618,7 +836,7 @@ function updateHint() {
   }
 }
 
-document.querySelectorAll(".seg button").forEach(b => b.onclick = () => setMode(b.dataset.mode));
+$$(".seg button").forEach(b => b.onclick = () => setMode(b.dataset.mode));
 F.amount.addEventListener("input", () => sheet.mode === "equal" ? renderSplit() : updateHint());
 $("#splitRows").addEventListener("input", e => {
   const m = e.target.dataset.m;
@@ -629,13 +847,16 @@ $("#splitRows").addEventListener("input", e => {
 $("#cancel").onclick = () => dlg.close();
 dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
 $("#del").onclick = () => {
-  if (!sheet.editId || !confirm("Diese Ausgabe löschen?")) return;
-  expRef().doc(sheet.editId).delete().then(() => toast("Ausgabe gelöscht")).catch(showError);
+  const e = sheet.prev;
+  if (!e || !canEdit(e) || !confirm(`„${e.desc}“ löschen? Der Eintrag bleibt im Verlauf sichtbar und kann zurückgeholt werden.`)) return;
+  commit(b => b.update(expRef().doc(e.id), { deleted: true, deletedAt: Date.now(), deletedBy: myName() }),
+    `hat „${e.desc}“ (${fmt(e.amount)}) gelöscht`).then(() => toast("Ausgabe gelöscht"));
   dlg.close();
 };
 
-F.onsubmit = async e => {
+F.onsubmit = e => {
   e.preventDefault();
+  if (!sheet.editable) return;
   const err = msg => { $("#formErr").textContent = msg; };
   const desc = F.desc.value.trim();
   const amount = toCents(F.amount.value);
@@ -658,18 +879,30 @@ F.onsubmit = async e => {
     if (sum !== amount) return err(`Die Einzelbeträge ergeben ${fmt(sum)}, die Ausgabe ist ${fmt(amount)}.`);
   }
 
+  const prev = sheet.prev, me = myName();
+  const owner = prev ? isOwner(prev) : true;
+  const unlocked = owner ? $("#unlock").checked : !!prev.unlocked;
   const data = {
-    kind: "expense", desc, amount, date: F.date.value, paidBy: F.paidBy.value,
-    shares, splitMode: sheet.mode, createdAt: sheet.createdAt || Date.now()
+    kind: "expense", desc, amount, date: F.date.value, paidBy: F.paidBy.value, shares, splitMode: sheet.mode,
+    createdAt: prev ? (prev.createdAt || Date.now()) : Date.now(),
+    createdBy: prev ? ownerOf(prev) : me, unlocked, deleted: false
   };
+  if (prev) { data.updatedAt = Date.now(); data.updatedBy = me; }
+  let text;
+  if (!prev) text = `hat „${desc}“ (${fmt(amount)}) hinzugefügt`;
+  else {
+    const ch = [];
+    if (prev.amount !== amount) ch.push(`${fmt(prev.amount)} → ${fmt(amount)}`);
+    if (prev.desc !== desc) ch.push(`vorher „${prev.desc}“`);
+    if (prev.paidBy !== data.paidBy) ch.push(`bezahlt von ${data.paidBy} statt ${prev.paidBy}`);
+    if (!!prev.unlocked !== unlocked) ch.push(unlocked ? "für alle freigegeben" : "wieder gesperrt");
+    text = `hat „${desc}“ geändert${ch.length ? ` (${ch.join(", ")})` : ""}`;
+  }
+  const ref = prev ? expRef().doc(prev.id) : expRef().doc();
   $("#save").disabled = true;
-  try {
-    // Nicht auf den Server warten: Firestore speichert sofort lokal und synchronisiert im Hintergrund.
-    const p = sheet.editId ? expRef().doc(sheet.editId).set(data) : expRef().add(data);
-    p.catch(showError);
-    dlg.close();
-    toast(sheet.editId ? "Änderung gespeichert" : "Ausgabe gespeichert");
-  } catch (x) { showError(x); $("#save").disabled = false; }
+  commit(b => b.set(ref, data), text);
+  dlg.close();
+  toast(prev ? "Änderung gespeichert" : "Ausgabe gespeichert");
 };
 
 route();
