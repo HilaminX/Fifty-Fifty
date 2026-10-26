@@ -207,6 +207,47 @@ legend{font-size:.9rem; color:var(--muted); margin-bottom:8px; padding:0}
 .lock{font-size:.75rem; margin-left:6px}
 .settle .plus{font-weight:600; font-size:.9rem}
 
+/* Reiseplan & Dokumente */
+.tabs{overflow-x:auto; scrollbar-width:none; gap:22px}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex-shrink:0}
+.addline{display:block; width:100%; text-align:center; margin:14px 0 4px; cursor:pointer}
+.upbtn{cursor:pointer}
+.countdown{display:flex; align-items:baseline; gap:10px; background:var(--surface); border-radius:16px; padding:14px 18px; margin-top:14px}
+.countdown b{font-size:2rem; font-weight:700; letter-spacing:-.02em; color:var(--link)}
+.countdown span{color:var(--muted); font-weight:500}
+.pitem{background:var(--surface); border-radius:14px; margin-bottom:6px; overflow:hidden}
+.pitem.past{opacity:.6}
+.pmain{display:flex; gap:12px; width:100%; text-align:left; background:none; border:0; padding:14px 16px; align-items:flex-start}
+.picon{font-size:1.4rem; line-height:1.2; flex-shrink:0}
+.ptxt{flex:1; min-width:0}
+.ptxt strong{display:block; font-weight:600}
+.ptxt small{display:block; color:var(--muted); font-size:.85rem; white-space:pre-line; margin-top:2px}
+.ptime{display:block; color:var(--link); font-size:.82rem; font-weight:700; font-variant-numeric:tabular-nums}
+.pextra{display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 12px 52px}
+.chipline{display:inline-flex; align-items:center; gap:4px; max-width:100%; background:var(--bg); border:1px solid var(--line); border-radius:999px; padding:5px 12px; font-size:.82rem; color:var(--ink); text-decoration:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.badge.soft{background:var(--line); color:var(--ink)}
+.day .badge{margin-left:8px}
+.note{background:color-mix(in srgb, var(--accent) 16%, transparent); border-radius:14px; padding:12px 14px; margin-top:14px; font-size:.9rem}
+.offl{color:var(--plus); font-size:.78rem; font-weight:700; white-space:nowrap}
+.types{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px}
+.types button{border:1.5px solid var(--line); background:var(--bg); border-radius:999px; padding:7px 12px; font-size:.88rem; font-weight:600; color:var(--muted)}
+.types button[aria-pressed="true"]{border-color:var(--accent); background:var(--accent); color:var(--accent-ink)}
+.opt{font-size:.78rem}
+.pdocs{margin-top:4px}
+.flabel{display:block; font-size:.9rem; color:var(--muted); margin-bottom:4px}
+.pdocs .upbtn{display:inline-block; margin-top:10px}
+#planFields{border:0; padding:0; margin:0; min-width:0}
+#planForm{padding:24px 20px calc(20px + env(safe-area-inset-bottom,0px))}
+dialog.viewer{max-width:900px; width:100%; height:100%; max-height:100%; margin:0 auto; border-radius:0; display:none; flex-direction:column}
+dialog.viewer[open]{display:flex}
+@media (min-width:640px){ dialog.viewer{height:92vh; margin:auto; border-radius:20px} }
+.vhead{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; padding:calc(14px + env(safe-area-inset-top,0px)) 16px 12px; border-bottom:1px solid var(--line)}
+.vhead strong{flex:1 1 160px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.vbtns{display:flex; gap:8px}
+.vbody{flex:1; overflow:auto; padding:12px; background:var(--bg); padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+.vbody img, .vbody canvas{display:block; width:100%; height:auto; margin:0 auto 10px; border-radius:6px; background:#fff}
+
 /* Startbild */
 #splash{
   position:fixed; inset:0; z-index:100; background:#1E2A38; color:#FFC93C;
@@ -269,6 +310,54 @@ legend{font-size:.9rem; color:var(--muted); margin-bottom:8px; padding:0}
       <button type="submit" id="save" class="primary">Speichern</button>
     </div>
   </form>
+</dialog>
+<dialog id="planSheet" aria-labelledby="planTitle">
+  <form id="planForm" novalidate>
+    <h2 id="planTitle">Neuer Programmpunkt</h2>
+    <fieldset id="planFields">
+      <div class="types" id="planTypes" role="group" aria-label="Art">
+        <button type="button" data-type="flight">✈️ Flug</button>
+        <button type="button" data-type="hotel">🏨 Unterkunft</button>
+        <button type="button" data-type="car">🚗 Mietwagen</button>
+        <button type="button" data-type="train">🚆 Zug & Bus</button>
+        <button type="button" data-type="activity">🎟️ Ausflug</button>
+        <button type="button" data-type="other">📌 Sonstiges</button>
+      </div>
+      <label>Titel<input name="title" maxlength="80" autocomplete="off"></label>
+      <div class="two">
+        <label>Datum<input type="date" name="date"></label>
+        <label>Uhrzeit<input type="time" name="time"></label>
+      </div>
+      <div class="two">
+        <label>Bis Datum <span class="opt">(optional)</span><input type="date" name="endDate"></label>
+        <label>Bis Uhrzeit <span class="opt">(optional)</span><input type="time" name="endTime"></label>
+      </div>
+      <label>Ort oder Adresse<input name="place" maxlength="140" placeholder="z. B. Flughafen Bari" autocomplete="off"></label>
+      <label>Notiz<textarea name="note" rows="3" maxlength="500" placeholder="z. B. Buchungsnummer, Gate, Treffpunkt"></textarea></label>
+      <div class="pdocs">
+        <span class="flabel">Dokumente anhängen</span>
+        <div id="planDocs"></div>
+        <label class="ghost sm upbtn">+ Neues Dokument hochladen<input type="file" id="planUpload" accept="image/*,application/pdf,*/*" hidden></label>
+      </div>
+    </fieldset>
+    <p id="planErr" class="err" role="alert"></p>
+    <div class="actions">
+      <button type="button" id="planDel" class="danger">Löschen</button>
+      <button type="button" id="planCancel" class="ghost">Abbrechen</button>
+      <button type="submit" id="planSave" class="primary">Speichern</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="viewer" class="viewer" aria-labelledby="vName">
+  <div class="vhead">
+    <strong id="vName"></strong>
+    <div class="vbtns">
+      <button type="button" id="vShare" class="ghost sm">Teilen</button>
+      <button type="button" id="vDel" class="ghost sm dangerline">Löschen</button>
+      <button type="button" id="vClose" class="primary sm">Schließen</button>
+    </div>
+  </div>
+  <div id="vBody" class="vbody"></div>
 </dialog>
 <div id="toast" role="status" aria-live="polite"></div>
 <script>
@@ -360,7 +449,7 @@ async function shareText(text, title) {
 }
 
 /* ---------- Zustand ---------- */
-const state = { gid: null, group: null, expenses: [], log: [], tab: "ausgaben", unsub: [] };
+const state = { gid: null, group: null, expenses: [], log: [], plan: [], docs: [], tab: "ausgaben", unsub: [] };
 const groupRef = () => db.collection("groups").doc(state.gid);
 const expRef = () => groupRef().collection("expenses");
 const logRef = () => groupRef().collection("log");
@@ -493,7 +582,7 @@ function remember(id, data) {
 
 /* ---------- Gruppe ---------- */
 function openGroup(id) {
-  state.gid = id; state.group = null; state.expenses = []; state.log = [];
+  state.gid = id; state.group = null; state.expenses = []; state.log = []; state.plan = []; state.docs = [];
   $("#app").innerHTML = `<p class="loading">Lade Gruppe …</p>`;
   state.unsub.push(groupRef().onSnapshot(snap => {
     if (!snap.exists) {
@@ -511,6 +600,15 @@ function openGroup(id) {
   state.unsub.push(logRef().orderBy("at", "desc").limit(200).onSnapshot(qs => {
     state.log = qs.docs.map(d => d.data());
     if (state.group && state.tab === "verlauf") renderGroup();
+  }, () => {}));
+  const travelTabs = ["plan", "docs", "verlauf"];
+  state.unsub.push(planRef().onSnapshot(qs => {
+    state.plan = qs.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (state.group && travelTabs.includes(state.tab)) renderGroup();
+  }, () => {}));
+  state.unsub.push(docsRef().onSnapshot(qs => {
+    state.docs = qs.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (state.group && travelTabs.includes(state.tab)) renderGroup();
   }, () => {}));
 }
 
@@ -568,7 +666,7 @@ function renderGroup() {
         <div class="chips">${g.members.map(m => `<button class="chip" type="button" data-me="${esc(m)}">${esc(m)}</button>`).join("")}</div>
         <p class="sub"><button class="linkbtn" id="share" type="button">Link teilen</button></p></div>`;
 
-  const tabs = [["ausgaben", "Ausgaben"], ["uebersicht", "Übersicht"], ["verlauf", "Verlauf"]];
+  const tabs = [["ausgaben", "Ausgaben"], ["uebersicht", "Übersicht"], ["plan", "Reiseplan"], ["docs", "Dokumente"], ["verlauf", "Verlauf"]];
   $("#app").innerHTML = `
     <header>
       <a href="#" class="back">‹ Alle Gruppen</a>
@@ -580,9 +678,11 @@ function renderGroup() {
     <nav class="tabs" role="tablist">
       ${tabs.map(([k, l]) => `<button role="tab" data-tab="${k}" aria-selected="${state.tab === k}">${l}</button>`).join("")}
     </nav>
-    <main>${state.tab === "ausgaben" ? renderExpenses() : state.tab === "uebersicht" ? renderOverview(st) : renderLog()}</main>
-    ${isOpen() ? `<button class="fab primary" id="add" type="button">Ausgabe hinzufügen</button>` : ""}`;
+    <main>${({ ausgaben: renderExpenses, uebersicht: () => renderOverview(st), plan: renderPlan, docs: renderDocs, verlauf: renderLog }[state.tab] || renderExpenses)()}</main>
+    ${isOpen() && ["ausgaben", "uebersicht"].includes(state.tab) ? `<button class="fab primary" id="add" type="button">Ausgabe hinzufügen</button>` : ""}`;
   bindGroup(st);
+  bindTravel();
+  const at = $(".tabs [aria-selected=true]"); if (at) at.scrollIntoView({ block: "nearest", inline: "center" });
 }
 const tile = (label, value, cls = "") => `<div class="stat"><small>${label}</small><b class="${cls}">${value}</b></div>`;
 
@@ -631,6 +731,15 @@ function bindGroup(st) {
     commit(b => b.update(expRef().doc(e.id), { deleted: false }),
       `hat ${e.kind === "payment" ? `die Rückzahlung ${e.paidBy} → ${e.shares[0].m}` : `„${e.desc}“`} (${fmt(e.amount)}) wiederhergestellt`)
       .then(() => toast("Wiederhergestellt"));
+  });
+
+  $$("[data-restore-plan]").forEach(btn => btn.onclick = () => {
+    const p = state.plan.find(x => x.id === btn.dataset.restorePlan); if (!p) return;
+    commit(b => b.update(planRef().doc(p.id), { deleted: false }), `hat „${p.title}“ im Reiseplan wiederhergestellt`).then(() => toast("Wiederhergestellt"));
+  });
+  $$("[data-restore-doc]").forEach(btn => btn.onclick = () => {
+    const d = state.docs.find(x => x.id === btn.dataset.restoreDoc); if (!d) return;
+    commit(b => b.update(docsRef().doc(d.id), { deleted: false }), `hat das Dokument „${d.name}“ wiederhergestellt`).then(() => toast("Wiederhergestellt"));
   });
 
   const am = $("#addMember");
@@ -739,10 +848,16 @@ function renderOverview(st) {
 }
 
 function renderLog() {
+  const delPlan = state.plan.filter(p => p.deleted), delDocs = state.docs.filter(d => d.deleted);
+  const canR = isOpen() && !!myName();
+  const travelDel = delPlan.length || delDocs.length ? `<section class="block"><h2>Gelöscht aus Reiseplan & Dokumenten</h2><ul class="loglist">
+    ${delPlan.map(p => `<li><div><b>${(PLAN_TYPES[p.type] || PLAN_TYPES.other).icon} ${esc(p.title)}</b><small>gelöscht${p.deletedBy ? ` von ${esc(p.deletedBy)}` : ""} ${fmtTime(p.deletedAt)}</small></div>${canR ? `<button class="ghost sm" type="button" data-restore-plan="${p.id}">Zurückholen</button>` : ""}</li>`).join("")}
+    ${delDocs.map(d => `<li><div><b>${docIcon(d)} ${esc(d.name)}</b><small>gelöscht${d.deletedBy ? ` von ${esc(d.deletedBy)}` : ""} ${fmtTime(d.deletedAt)}</small></div>${canR ? `<button class="ghost sm" type="button" data-restore-doc="${d.id}">Zurückholen</button>` : ""}</li>`).join("")}
+  </ul></section>` : "";
   const del = state.expenses.filter(e => e.deleted);
   const canRestore = e => isOpen() && !!myName() && (!!e.unlocked || isOwner(e) || e.deletedBy === myName());
   const label = e => e.kind === "payment" ? `Rückzahlung ${esc(e.paidBy)} → ${esc(e.shares[0].m)}` : esc(e.desc);
-  return (del.length ? `<section class="block"><h2>Gelöschte Einträge</h2><ul class="loglist">${del.map(e => `<li>
+  return travelDel + (del.length ? `<section class="block"><h2>Gelöschte Ausgaben</h2><ul class="loglist">${del.map(e => `<li>
       <div><b>${label(e)}</b> · ${fmt(e.amount)}<small>gelöscht${e.deletedBy ? ` von ${esc(e.deletedBy)}` : ""} ${fmtTime(e.deletedAt)}</small></div>
       ${canRestore(e) ? `<button class="ghost sm" type="button" data-restore="${e.id}">Zurückholen</button>` : ""}</li>`).join("")}</ul></section>` : "") +
     `<section class="block"><h2>Verlauf</h2>${state.log.length
@@ -904,6 +1019,298 @@ F.onsubmit = e => {
   dlg.close();
   toast(prev ? "Änderung gespeichert" : "Ausgabe gespeichert");
 };
+
+/* ---------- Reiseplan ---------- */
+const planRef = () => groupRef().collection("plan");
+const docsRef = () => groupRef().collection("docs");
+const PLAN_TYPES = {
+  flight:   { icon: "✈️", label: "Flug",        ph: "z. B. Flug München → Bari" },
+  hotel:    { icon: "🏨", label: "Unterkunft",  ph: "z. B. Ferienwohnung Altstadt" },
+  car:      { icon: "🚗", label: "Mietwagen",   ph: "z. B. Mietwagen Abholung" },
+  train:    { icon: "🚆", label: "Zug & Bus",   ph: "z. B. Zug Bari → Lecce" },
+  activity: { icon: "🎟️", label: "Ausflug",     ph: "z. B. Bootstour Polignano" },
+  other:    { icon: "📌", label: "Sonstiges",   ph: "z. B. Treffpunkt" }
+};
+const activePlan = () => state.plan.filter(p => !p.deleted);
+const activeDocs = () => state.docs.filter(d => !d.deleted);
+const dayDiff = d => Math.round((Date.parse(d + "T00:00") - Date.parse(today() + "T00:00")) / 864e5);
+const mapsUrl = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+const fmtShortDay = d => d ? new Date(d + "T00:00").toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" }) : "";
+
+function countdown() {
+  const ds = activePlan().filter(p => p.date);
+  if (!ds.length) return "";
+  const start = ds.map(p => p.date).sort()[0];
+  const end = ds.map(p => p.endDate || p.date).sort().slice(-1)[0];
+  const toStart = dayDiff(start), toEnd = dayDiff(end);
+  if (toStart > 1) return `<div class="countdown"><b>${toStart}</b><span>Tage bis zur Reise</span></div>`;
+  if (toStart === 1) return `<div class="countdown"><b>Morgen</b><span>geht’s los!</span></div>`;
+  if (toEnd >= 0) return `<div class="countdown"><b>Tag ${1 - toStart}</b><span>von ${toEnd - toStart + 1}</span></div>`;
+  return "";
+}
+
+function renderPlan() {
+  const items = activePlan().sort((a, b) => ((a.date || "9999") + (a.time || "99:99")).localeCompare((b.date || "9999") + (b.time || "99:99")));
+  const docs = activeDocs();
+  let html = countdown();
+  if (isOpen()) html += `<button class="primary addline" id="addPlan" type="button">+ Programmpunkt</button>`;
+  if (!items.length) return html + `<div class="empty"><p>Noch nichts geplant. Trag Flüge, Unterkunft oder Ausflüge ein und häng die passenden Tickets an.</p></div>`;
+  html += `<ul class="list">`;
+  let last = null;
+  for (const p of items) {
+    if ((p.date || "") !== last) {
+      last = p.date || "";
+      const dd = p.date ? dayDiff(p.date) : null;
+      const tag = dd === 0 ? `<span class="badge">heute</span>` : dd === 1 ? `<span class="badge soft">morgen</span>` : "";
+      html += `<li class="day">${p.date ? fmtDate(p.date) : "Ohne Datum"}${tag}</li>`;
+    }
+    const t = PLAN_TYPES[p.type] || PLAN_TYPES.other;
+    const past = p.date && dayDiff(p.endDate || p.date) < 0;
+    const until = p.endDate || p.endTime ? ` – ${p.endDate && p.endDate !== p.date ? fmtShortDay(p.endDate) + " " : ""}${p.endTime || ""}` : "";
+    const pdocs = (p.docIds || []).map(id => docs.find(d => d.id === id)).filter(Boolean);
+    html += `<li class="pitem${past ? " past" : ""}">
+      <button class="pmain" type="button" data-plan="${p.id}">
+        <span class="picon" aria-hidden="true">${t.icon}</span>
+        <span class="ptxt"><span class="ptime">${p.time ? esc(p.time) : t.label}${esc(until)}</span><strong>${esc(p.title)}</strong>${p.note ? `<small>${esc(p.note)}</small>` : ""}</span>
+      </button>
+      ${p.place || pdocs.length ? `<div class="pextra">
+        ${p.place ? `<a class="chipline" href="${mapsUrl(p.place)}" target="_blank" rel="noopener">📍 ${esc(p.place)}</a>` : ""}
+        ${pdocs.map(d => `<button class="chipline" type="button" data-doc="${d.id}">${docIcon(d)} ${esc(d.name)}</button>`).join("")}
+      </div>` : ""}
+    </li>`;
+  }
+  return html + `</ul>`;
+}
+
+/* ---------- Dokumente ---------- */
+const MAX_FILE = 5 * 1024 * 1024, CHUNK = 700000;
+const blobCache = {};
+const docIcon = d => d.type === "application/pdf" ? "📄" : (d.type || "").startsWith("image/") ? "🖼️" : "📎";
+const fmtSize = b => b > 1048576 ? (b / 1048576).toFixed(1).replace(".", ",") + " MB" : Math.max(1, Math.round(b / 1024)) + " KB";
+const offlineKey = () => "offline:" + state.gid;
+
+function renderDocs() {
+  const docs = activeDocs().sort((a, b) => b.createdAt - a.createdAt);
+  const off = store.get(offlineKey(), []);
+  const plan = activePlan();
+  let html = `<div class="note">🔒 Jeder mit dem Gruppen-Link kann Dokumente sehen. Lade Buchungen und Tickets hoch, aber keine Reisepässe oder Ausweise.</div>`;
+  if (isOpen()) html += `<label class="primary addline upbtn">+ Dokument hinzufügen<input type="file" id="docUpload" accept="image/*,application/pdf,*/*" hidden></label>`;
+  html += `<p id="upState" class="hint" role="status"></p>`;
+  if (!docs.length) return html + `<div class="empty"><p>Noch keine Dokumente. Bordkarten, Hotelbestätigungen oder Tickets lassen sich als Foto oder PDF ablegen.</p></div>`;
+  html += `<ul class="list">${docs.map(d => {
+    const used = plan.filter(p => (p.docIds || []).includes(d.id)).map(p => p.title);
+    return `<li><button class="item" type="button" data-doc="${d.id}">
+      <span class="picon" aria-hidden="true">${docIcon(d)}</span>
+      <span class="txt"><strong>${esc(d.name)}</strong><small>${fmtSize(d.size)} · von ${esc(d.createdBy || "?")}${used.length ? ` · zu: ${esc(used.join(", "))}` : ""}</small></span>
+      ${off.includes(d.id) ? `<span class="offl" title="Offline verfügbar">✓ offline</span>` : ""}
+    </button></li>`; }).join("")}</ul>
+    <div class="btnrow"><button class="ghost sm" id="allOffline" type="button">Alle offline verfügbar machen</button></div>`;
+  return html;
+}
+
+async function prepareFile(file) {
+  if ((file.type || "").startsWith("image/") && !/gif|svg/.test(file.type)) {
+    try {
+      const bmp = await createImageBitmap(file);
+      const scale = Math.min(1, 2000 / Math.max(bmp.width, bmp.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(bmp.width * scale); c.height = Math.round(bmp.height * scale);
+      c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+      const blob = await new Promise(r => c.toBlob(r, "image/jpeg", 0.82));
+      if (blob) return { blob, type: "image/jpeg", name: file.name.replace(/\.[^.]+$/, "") + ".jpg" };
+    } catch {}
+  }
+  return { blob: file, type: file.type || "application/octet-stream", name: file.name };
+}
+const toB64 = blob => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(",")[1] || ""); r.onerror = rej; r.readAsDataURL(blob); });
+
+async function uploadDoc(file) {
+  const p = await prepareFile(file);
+  if (p.blob.size > MAX_FILE) { toast(`„${file.name}“ ist zu groß (${fmtSize(p.blob.size)}). Erlaubt sind bis 5 MB.`); return null; }
+  const b64 = await toB64(p.blob);
+  const n = Math.max(1, Math.ceil(b64.length / CHUNK));
+  const ref = docsRef().doc();
+  const writes = [];
+  for (let i = 0; i < n; i++) writes.push(ref.collection("chunks").doc(String(i).padStart(3, "0")).set({ i, d: b64.slice(i * CHUNK, (i + 1) * CHUNK) }));
+  blobCache[ref.id] = p.blob;
+  commit(b => b.set(ref, { name: p.name, type: p.type, size: p.blob.size, chunks: n, createdAt: Date.now(), createdBy: myName(), deleted: false }),
+    `hat das Dokument „${p.name}“ hochgeladen`);
+  const off = store.get(offlineKey(), []); off.push(ref.id); store.set(offlineKey(), off);
+  Promise.all(writes).then(() => toast(`„${p.name}“ hochgeladen`)).catch(showError);
+  return ref.id;
+}
+
+async function loadDoc(d) {
+  if (blobCache[d.id]) return blobCache[d.id];
+  const qs = await docsRef().doc(d.id).collection("chunks").orderBy("i").get();
+  if (qs.size < (d.chunks || 1)) throw new Error("incomplete");
+  const bin = atob(qs.docs.map(x => x.data().d).join(""));
+  const arr = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+  const blob = new Blob([arr], { type: d.type });
+  const off = store.get(offlineKey(), []); if (!off.includes(d.id)) { off.push(d.id); store.set(offlineKey(), off); }
+  return blobCache[d.id] = blob;
+}
+
+let pdfjsP = null;
+function loadPdfJs() {
+  return pdfjsP || (pdfjsP = new Promise((res, rej) => {
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+    s.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"; res(window.pdfjsLib); };
+    s.onerror = () => { pdfjsP = null; rej(new Error("pdfjs")); };
+    document.head.appendChild(s);
+  }));
+}
+
+const viewer = $("#viewer");
+let viewing = null;
+async function openDoc(id) {
+  const d = state.docs.find(x => x.id === id);
+  if (!d) return;
+  viewing = d;
+  $("#vName").textContent = d.name;
+  $("#vDel").hidden = !(isOpen() && myName() && (d.createdBy === myName() || !d.createdBy));
+  const body = $("#vBody");
+  body.innerHTML = `<p class="loading">Lade Dokument …</p>`;
+  viewer.showModal();
+  let blob;
+  try { blob = await loadDoc(d); }
+  catch { body.innerHTML = `<p class="loading">Das Dokument ist auf diesem Gerät noch nicht gespeichert und es gibt gerade keine Verbindung. Versuch es mit Internet erneut.</p>`; return; }
+  if (viewing !== d) return;
+  if (d.type.startsWith("image/")) {
+    body.innerHTML = `<img alt="${esc(d.name)}" src="${URL.createObjectURL(blob)}">`;
+  } else if (d.type === "application/pdf") {
+    body.innerHTML = "";
+    try {
+      const lib = await loadPdfJs();
+      const pdf = await lib.getDocument({ data: new Uint8Array(await blob.arrayBuffer()) }).promise;
+      for (let n = 1; n <= pdf.numPages && viewing === d; n++) {
+        const page = await pdf.getPage(n);
+        const w = body.clientWidth || 340;
+        const v = page.getViewport({ scale: (w / page.getViewport({ scale: 1 }).width) * (window.devicePixelRatio || 1) });
+        const c = document.createElement("canvas");
+        c.width = v.width; c.height = v.height;
+        body.appendChild(c);
+        await page.render({ canvasContext: c.getContext("2d"), viewport: v }).promise;
+      }
+    } catch {
+      body.innerHTML = `<p class="loading">Die Vorschau lässt sich gerade nicht anzeigen. Tippe auf „Teilen“, um das PDF in einer anderen App zu öffnen.</p>`;
+    }
+  } else {
+    body.innerHTML = `<p class="loading">Für diesen Dateityp gibt es keine Vorschau. Tippe auf „Teilen“, um die Datei in einer anderen App zu öffnen.</p>`;
+  }
+}
+$("#vClose").onclick = () => { viewing = null; viewer.close(); };
+viewer.addEventListener("close", () => { viewing = null; });
+$("#vShare").onclick = async () => {
+  const d = viewing; if (!d) return;
+  const blob = blobCache[d.id] || await loadDoc(d).catch(() => null);
+  if (!blob) return toast("Dokument noch nicht geladen.");
+  const file = new File([blob], d.name, { type: d.type });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], title: d.name }); } catch {} return; }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = d.name; a.click();
+};
+$("#vDel").onclick = () => {
+  const d = viewing; if (!d) return;
+  if (!confirm(`Dokument „${d.name}“ löschen? Es bleibt im Verlauf und kann zurückgeholt werden.`)) return;
+  commit(b => b.update(docsRef().doc(d.id), { deleted: true, deletedAt: Date.now(), deletedBy: myName() }), `hat das Dokument „${d.name}“ gelöscht`)
+    .then(() => toast("Dokument gelöscht"));
+  viewer.close();
+};
+
+/* ---------- Programmpunkt anlegen / bearbeiten ---------- */
+const planDlg = $("#planSheet"), PF = $("#planForm");
+let psheet = null;
+function setPlanType(t) {
+  psheet.type = t;
+  $$("#planTypes button").forEach(b => b.setAttribute("aria-pressed", b.dataset.type === t));
+  PF.title.placeholder = PLAN_TYPES[t].ph;
+}
+function renderPlanDocs() {
+  const docs = activeDocs();
+  $("#planDocs").innerHTML = docs.length
+    ? docs.map(d => `<label class="srow"><input type="checkbox" data-pd="${d.id}" ${psheet.docs.has(d.id) ? "checked" : ""}><span>${docIcon(d)} ${esc(d.name)}</span></label>`).join("")
+    : `<p class="hint">Noch keine Dokumente in dieser Gruppe.</p>`;
+}
+function openPlan(p) {
+  const editable = isOpen() && !!myName();
+  psheet = { prev: p || null, type: p ? p.type : "activity", docs: new Set(p ? p.docIds || [] : []) };
+  PF.title.value = p ? p.title : "";
+  PF.date.value = p ? p.date || "" : "";
+  PF.time.value = p ? p.time || "" : "";
+  PF.endDate.value = p ? p.endDate || "" : "";
+  PF.endTime.value = p ? p.endTime || "" : "";
+  PF.place.value = p ? p.place || "" : "";
+  PF.note.value = p ? p.note || "" : "";
+  setPlanType(psheet.type);
+  renderPlanDocs();
+  $("#planFields").disabled = !editable;
+  $("#planTitle").textContent = !p ? "Neuer Programmpunkt" : editable ? "Programmpunkt bearbeiten" : "Programmpunkt";
+  $("#planDel").hidden = !p || !editable;
+  $("#planSave").hidden = !editable;
+  $("#planCancel").textContent = editable ? "Abbrechen" : "Schließen";
+  $("#planErr").textContent = "";
+  planDlg.showModal();
+}
+$$("#planTypes button").forEach(b => b.onclick = () => setPlanType(b.dataset.type));
+$("#planDocs").addEventListener("change", e => {
+  const id = e.target.dataset.pd; if (!id) return;
+  e.target.checked ? psheet.docs.add(id) : psheet.docs.delete(id);
+});
+$("#planUpload").addEventListener("change", async e => {
+  const files = [...e.target.files]; e.target.value = "";
+  for (const f of files) { const id = await uploadDoc(f); if (id) psheet.docs.add(id); }
+  setTimeout(renderPlanDocs, 300);
+});
+$("#planCancel").onclick = () => planDlg.close();
+planDlg.addEventListener("click", e => { if (e.target === planDlg) planDlg.close(); });
+$("#planDel").onclick = () => {
+  const p = psheet.prev; if (!p || !confirm(`„${p.title}“ aus dem Reiseplan löschen?`)) return;
+  commit(b => b.update(planRef().doc(p.id), { deleted: true, deletedAt: Date.now(), deletedBy: myName() }), `hat „${p.title}“ aus dem Reiseplan gelöscht`);
+  planDlg.close();
+};
+PF.onsubmit = e => {
+  e.preventDefault();
+  const title = PF.title.value.trim();
+  if (!title) return $("#planErr").textContent = "Gib dem Programmpunkt einen Titel.";
+  if (PF.endDate.value && PF.date.value && PF.endDate.value < PF.date.value) return $("#planErr").textContent = "Das Ende liegt vor dem Beginn.";
+  const prev = psheet.prev;
+  const data = {
+    type: psheet.type, title, date: PF.date.value, time: PF.time.value, endDate: PF.endDate.value, endTime: PF.endTime.value,
+    place: PF.place.value.trim(), note: PF.note.value.trim(), docIds: [...psheet.docs].filter(id => state.docs.some(d => d.id === id)),
+    createdAt: prev ? prev.createdAt : Date.now(), createdBy: prev ? prev.createdBy || "" : myName(), deleted: false
+  };
+  if (prev) { data.updatedAt = Date.now(); data.updatedBy = myName(); }
+  const when = data.date ? ` (${fmtShortDay(data.date)}${data.time ? " " + data.time : ""})` : "";
+  const ref = prev ? planRef().doc(prev.id) : planRef().doc();
+  commit(b => b.set(ref, data), prev ? `hat „${title}“ im Reiseplan geändert${when}` : `hat „${title}“${when} zum Reiseplan hinzugefügt`);
+  planDlg.close();
+  toast(prev ? "Gespeichert" : "Zum Reiseplan hinzugefügt");
+};
+
+function bindTravel() {
+  const ap = $("#addPlan"); if (ap) ap.onclick = () => { if (!needMe()) openPlan(); };
+  $$("[data-plan]").forEach(b => b.onclick = () => openPlan(state.plan.find(p => p.id === b.dataset.plan)));
+  $$("main [data-doc]").forEach(b => b.onclick = () => openDoc(b.dataset.doc));
+  const up = $("#docUpload");
+  if (up) up.parentElement.onclick = e => { if (e.target === up) return; if (needMe()) e.preventDefault(); };
+  if (up) up.onchange = async e => {
+    if (needMe()) { e.target.value = ""; return; }
+    const files = [...e.target.files]; e.target.value = "";
+    const st = $("#upState");
+    for (const f of files) { if (st) st.textContent = `Lade „${f.name}“ hoch …`; await uploadDoc(f); }
+    if (st) st.textContent = "";
+  };
+  const ao = $("#allOffline");
+  if (ao) ao.onclick = async () => {
+    ao.disabled = true; ao.textContent = "Wird gespeichert …";
+    let ok = 0; const docs = activeDocs();
+    for (const d of docs) { try { await loadDoc(d); ok++; } catch {} }
+    toast(`${ok} von ${docs.length} Dokumenten offline verfügbar`);
+    renderGroup();
+  };
+}
 
 route();
 </script>
