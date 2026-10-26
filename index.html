@@ -139,7 +139,7 @@ details.fold[open] summary .section-title::after{transform:rotate(90deg)}
 
 /* Untere Navigation & Plus-Knopf */
 .nav{position:fixed; left:0; right:0; bottom:0; z-index:20; background:var(--surface); border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom,0px)}
-.nav-in{max-width:600px; margin:0 auto; display:grid; grid-template-columns:repeat(4,1fr)}
+.nav-in{max-width:600px; margin:0 auto; display:grid; grid-template-columns:repeat(5,1fr)}
 .nav button{background:none; border:0; padding:9px 4px 8px; display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--muted); font-size:.72rem; font-weight:600}
 .nav svg{width:24px; height:24px}
 .nav button[aria-current="page"]{color:var(--ink)}
@@ -266,6 +266,33 @@ dialog.viewer[open]{display:flex}
 #toast.show{opacity:1}
 body.home #toast{bottom:calc(30px + env(safe-area-inset-bottom,0px))}
 
+/* Währung, PayPal, Listen */
+.amountrow{display:grid; grid-template-columns:1fr 104px; gap:10px}
+.eurinfo{margin:-6px 0 12px; color:var(--link); font-weight:700; font-size:.92rem; min-height:0}
+.eurinfo:empty{display:none}
+.pp{color:#0070BA; border-color:color-mix(in srgb, #0070BA 35%, transparent)}
+.ppamount{font-size:2.2rem; font-weight:700; text-align:center; margin:0 0 14px; letter-spacing:-.02em}
+.ppqr{width:min(230px,70vw); margin:16px auto 4px; background:#fff; border-radius:16px; padding:10px}
+.ppqr svg{display:block; width:100%; height:auto}
+.seg.wide{display:flex; width:100%; margin:12px 0 0}
+.seg.wide button{flex:1; padding:9px 6px; font-size:.9rem}
+.addrow{margin-bottom:6px}
+.addrow .primary{padding:0; width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:14px}
+.addrow .primary svg{width:22px; height:22px}
+.llist{list-style:none; margin:6px 0 0; padding:0}
+.lrow{display:flex; align-items:center; gap:8px; padding:6px 0; border-top:1px solid var(--line)}
+.lrow:first-child{border-top:0}
+.lcheck{flex:1; min-width:0; display:flex; align-items:center; gap:12px; margin:0; color:var(--ink); font-size:1rem; font-weight:400; padding:6px 0}
+.lcheck input{width:24px; height:24px; margin:0; accent-color:var(--plus); flex-shrink:0}
+.ltext{min-width:0; overflow-wrap:anywhere}
+.lrow.done .ltext{text-decoration:line-through; color:var(--muted)}
+.whochip{display:inline-flex; align-items:center; gap:6px; border:1px dashed var(--line); background:var(--surface2); border-radius:999px; padding:3px 10px 3px 3px; font-size:.78rem; font-weight:600; color:var(--muted); max-width:42%; flex-shrink:0}
+.whochip span:last-child{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.whochip:not(:has(.av)){padding:6px 10px}
+.whochip .av{border:0}
+.menu .av{margin:0 2px}
+.nav button{font-size:.66rem}
+
 /* Startbild */
 #splash{position:fixed; inset:0; z-index:100; background:#1E2A38; color:#FFC93C; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; transition:opacity .45s ease, visibility .45s}
 #splash.hide{opacity:0; visibility:hidden}
@@ -300,11 +327,19 @@ body.home #toast{bottom:calc(30px + env(safe-area-inset-bottom,0px))}
     <h2 id="sheetTitle">Neue Ausgabe</h2>
     <fieldset id="formFields">
       <label>Wofür?<input name="desc" required maxlength="80" placeholder="z. B. Abendessen" autocomplete="off"></label>
-      <div class="two">
-        <label>Betrag in €<input name="amount" inputmode="decimal" required placeholder="0,00" autocomplete="off"></label>
-        <label>Datum<input type="date" name="date" required></label>
+      <div class="amountrow">
+        <label>Betrag<input name="amount" inputmode="decimal" required placeholder="0,00" autocomplete="off"></label>
+        <label>Währung<select name="cur" aria-label="Währung"></select></label>
       </div>
-      <label>Bezahlt von<select name="paidBy"></select></label>
+      <div id="rateRow" hidden>
+        <label>Wechselkurs: 1 € = … <span id="rateCur"></span><input name="rate" inputmode="decimal" autocomplete="off"></label>
+        <p class="hint" id="rateInfo" style="margin-top:-8px"></p>
+      </div>
+      <p class="eurinfo" id="eurInfo"></p>
+      <div class="two">
+        <label>Datum<input type="date" name="date" required></label>
+        <label>Bezahlt von<select name="paidBy"></select></label>
+      </div>
       <fieldset>
         <legend>Für wen?</legend>
         <div class="seg" role="group" aria-label="Art der Aufteilung">
@@ -400,6 +435,7 @@ body.home #toast{bottom:calc(30px + env(safe-area-inset-bottom,0px))}
     <span class="flabel">Symbol</span>
     <div class="emojis" id="gsEmojis"></div>
     <label>Name<input name="name" maxlength="60" autocomplete="off"></label>
+    <label>Währung für neue Ausgaben<select id="gsCur"></select></label>
     <span class="flabel">Mitglieder</span>
     <div id="gsMembers"></div>
     <div class="inline" style="margin-top:10px"><input id="gsNew" maxlength="40" placeholder="Name hinzufügen" aria-label="Neues Mitglied"><button type="button" class="ghost" id="gsAdd">Hinzufügen</button></div>
@@ -411,6 +447,17 @@ body.home #toast{bottom:calc(30px + env(safe-area-inset-bottom,0px))}
   </form>
 </dialog>
 
+<dialog id="ppSheet" aria-labelledby="ppTitle">
+  <div class="sheet ppbox">
+    <h2 id="ppTitle">PayPal</h2>
+    <p class="ppamount num" id="ppAmount"></p>
+    <a class="primary block-btn" id="ppOpen" href="#" target="_blank" rel="noopener">In PayPal öffnen</a>
+    <p class="hint" style="text-align:center">an <span id="ppUser"></span></p>
+    <div id="ppQr" class="ppqr"></div>
+    <p class="hint" style="text-align:center">Steht ihr nebeneinander? Einfach den Code mit der Handykamera scannen.</p>
+    <div class="actions"><button type="button" class="ghost" id="ppShare">Link schicken</button><button type="button" class="primary" data-close>Fertig</button></div>
+  </div>
+</dialog>
 <dialog id="menuSheet" aria-label="Menü">
   <div class="sheet"><ul class="menu" id="menuList"></ul></div>
 </dialog>
@@ -511,6 +558,7 @@ const ICON = {
   plus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`,
   back: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>`,
   invite: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M19 8v6M16 11h6"/></svg>`,
+  check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l2 2 3-3M4 13l2 2 3-3M4 20l2 2 3-3M13 7h8M13 14h8M13 21h8"/></svg>`,
   more: `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>`
 };
 const LOGO = `<svg class="logo" viewBox="0 0 200 200" aria-hidden="true">
@@ -534,7 +582,7 @@ $$("dialog").forEach(d => {
 });
 
 /* ---------- Zustand ---------- */
-const state = { gid: null, group: null, expenses: [], log: [], plan: [], docs: [], tab: "ausgaben", unsub: [] };
+const state = { gid: null, group: null, expenses: [], log: [], plan: [], docs: [], items: [], tab: "ausgaben", listTab: "todo", unsub: [] };
 const groupRef = () => db.collection("groups").doc(state.gid);
 const expRef = () => groupRef().collection("expenses");
 const logRef = () => groupRef().collection("log");
@@ -683,7 +731,7 @@ $("#joinForm").onsubmit = e => {
 function openGroup(id) {
   document.body.classList.remove("home");
   if (state.gid !== id) state.tab = "ausgaben";
-  state.gid = id; state.group = null; state.expenses = []; state.log = []; state.plan = []; state.docs = [];
+  state.gid = id; state.group = null; state.expenses = []; state.log = []; state.plan = []; state.docs = []; state.items = [];
   $("#app").innerHTML = `<p class="loading">Lade Gruppe …</p>`;
   const again = () => { if (state.group) renderGroup(); };
   state.unsub.push(groupRef().onSnapshot(snap => {
@@ -700,6 +748,13 @@ function openGroup(id) {
   state.unsub.push(logRef().orderBy("at", "desc").limit(200).onSnapshot(qs => { state.log = qs.docs.map(d => d.data()); if (state.tab === "verlauf") again(); }, () => {}));
   state.unsub.push(planRef().onSnapshot(qs => { state.plan = qs.docs.map(d => ({ id: d.id, ...d.data() })); again(); }, () => {}));
   state.unsub.push(docsRef().onSnapshot(qs => { state.docs = qs.docs.map(d => ({ id: d.id, ...d.data() })); again(); }, () => {}));
+  state.unsub.push(itemsRef().onSnapshot(qs => {
+    state.items = qs.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (state.tab !== "listen") return;
+    const a = document.activeElement, typing = a && a.closest && a.closest("#itemForm"), val = typing ? a.value : "";
+    again();
+    if (typing) { const i = $("#itemForm input"); if (i) { i.value = val; i.focus(); } }
+  }, () => {}));
 }
 
 function stats() {
@@ -728,7 +783,7 @@ function settle(st) {
   return out;
 }
 
-const TABS = [["ausgaben", "Ausgaben", "receipt"], ["abrechnung", "Abrechnung", "scale"], ["plan", "Reiseplan", "calendar"], ["docs", "Dokumente", "file"]];
+const TABS = [["ausgaben", "Ausgaben", "receipt"], ["abrechnung", "Abrechnung", "scale"], ["plan", "Reiseplan", "calendar"], ["listen", "Listen", "check"], ["docs", "Dokumente", "file"]];
 
 function renderGroup() {
   const g = state.group, me = myName(), st = stats(), total = totalSpent(), n = g.members.length;
@@ -748,8 +803,8 @@ function renderGroup() {
   const who = me ? "" : `<div class="who"><p><strong>Wer bist du?</strong> Dann siehst du deinen Anteil und nur du kannst deine Einträge ändern.</p>
       <div class="chips">${g.members.map(m => `<button class="chip" type="button" data-me="${esc(m)}">${av(m, "s")}${esc(m)}</button>`).join("")}</div></div>`;
   const tab = state.tab;
-  const content = { ausgaben: renderExpenses, abrechnung: () => renderOverview(st), plan: renderPlan, docs: renderDocs, verlauf: renderLog }[tab] || renderExpenses;
-  const showFab = isOpen() && tab !== "verlauf";
+  const content = { ausgaben: renderExpenses, abrechnung: () => renderOverview(st), plan: renderPlan, listen: renderLists, docs: renderDocs, verlauf: renderLog }[tab] || renderExpenses;
+  const showFab = isOpen() && tab !== "verlauf" && tab !== "listen";
   $("#app").innerHTML = `
     <div class="topbar">
       <a class="iconbtn" href="#" aria-label="Alle Gruppen">${ICON.back}</a>
@@ -769,6 +824,7 @@ function renderGroup() {
     ${showFab ? `<button class="fab" id="fab" type="button" aria-label="${tab === "plan" ? "Programmpunkt hinzufügen" : tab === "docs" ? "Dokument hinzufügen" : "Ausgabe hinzufügen"}">${ICON.plus}</button>` : ""}
     <nav class="nav" aria-label="Bereiche"><div class="nav-in">${TABS.map(([k, l, i]) => `<button type="button" data-tab="${k}" ${tab === k ? 'aria-current="page"' : ""}><span class="ni">${ICON[i]}</span>${l}</button>`).join("")}</div></nav>`;
   bindGroup(st);
+  syncMyPayPal();
 }
 
 function needMe() {
@@ -820,7 +876,10 @@ function bindGroup(st) {
   const act = (id, fn) => { const el = $(id); if (el) el.onclick = fn; };
   act("#summary", () => shareText(summaryText(st), g.name));
   act("#closeGroup", closeGroup);
+  $$("[data-pp]").forEach(btn => btn.onclick = () => openPayPal(settle(st)[+btn.dataset.pp]));
+  const pps = $("#ppSave"); if (pps) pps.onclick = () => savePayPal($("#ppInput").value);
   bindTravel();
+  bindLists();
 }
 
 /* Gruppen-Aktionen */
@@ -874,6 +933,7 @@ function openGroupSheet() {
   gsEmoji = g.emoji || "🧳";
   drawEmojis($("#gsEmojis"), gsEmoji, e => gsEmoji = e);
   drawMembers();
+  $("#gsCur").innerHTML = CURS.map(c => `<option value="${c}" ${c === (g.defaultCur || "EUR") ? "selected" : ""}>${c}</option>`).join("");
   $("#gsNew").disabled = $("#gsAdd").disabled = !isOpen();
   $("#groupSheet").showModal();
 }
@@ -892,9 +952,10 @@ $("#groupForm").onsubmit = e => {
   const ch = {};
   if (name !== g.name) ch.name = name;
   if (gsEmoji !== (g.emoji || "🧳")) ch.emoji = gsEmoji;
+  if ($("#gsCur").value !== (g.defaultCur || "EUR")) ch.defaultCur = $("#gsCur").value;
   $("#groupSheet").close();
   if (!Object.keys(ch).length) return;
-  commit(() => {}, ch.name ? `hat die Gruppe in „${name}“ umbenannt` : `hat das Symbol auf ${gsEmoji} geändert`, ch).then(() => toast("Gespeichert"));
+  commit(() => {}, ch.name ? `hat die Gruppe in „${name}“ umbenannt` : ch.emoji ? `hat das Symbol auf ${gsEmoji} geändert` : `hat die Währung auf ${ch.defaultCur} gestellt`, ch).then(() => toast("Gespeichert"));
 };
 
 /* ---------- Ansichten ---------- */
@@ -918,7 +979,7 @@ function renderExpenses() {
       html += `<li><button class="item pay" data-id="${e.id}">${av(e.paidBy)}<span class="txt"><strong>${esc(e.paidBy)} → ${esc(e.shares[0].m)}${lock}</strong><small>Rückzahlung</small></span><span class="right"><span class="amt">${fmt(e.amount)}</span></span></button></li>`;
     } else {
       const who = e.shares.length === all ? "alle" : e.shares.map(s => s.m).join(", ");
-      html += `<li><button class="item" data-id="${e.id}">${av(e.paidBy)}<span class="txt"><strong>${esc(e.desc)}${lock}</strong><small>${esc(e.paidBy)} · für ${esc(who)}</small></span><span class="right"><span class="amt">${fmt(e.amount)}</span>${myEffect(e)}</span></button></li>`;
+      html += `<li><button class="item" data-id="${e.id}">${av(e.paidBy)}<span class="txt"><strong>${esc(e.desc)}${lock}</strong><small>${e.orig ? `${fmtC(e.orig.amt, e.orig.cur)} · ` : ""}${esc(e.paidBy)} · für ${esc(who)}</small></span><span class="right"><span class="amt">${fmt(e.amount)}</span>${myEffect(e)}</span></button></li>`;
     }
   }
   return html + `</ul>`;
@@ -935,7 +996,7 @@ function renderOverview(st) {
   let settleBlock;
   if (isOpen()) {
     settleBlock = plan.length
-      ? `<h2>So wird ausgeglichen</h2>${plan.map((s, i) => `<div class="srow2">${av(s.from, "s")}<span class="txt"><b>${esc(s.from)}</b> <span class="arrow">→</span> <b>${esc(s.to)}</b><br><span class="num">${fmt(s.amount)}</span></span><button class="ghost sm" type="button" data-settle="${i}">Erledigt</button></div>`).join("")}
+      ? `<h2>So wird ausgeglichen</h2>${plan.map((s, i) => `<div class="srow2">${av(s.from, "s")}<span class="txt"><b>${esc(s.from)}</b> <span class="arrow">→</span> <b>${esc(s.to)}</b><br><span class="num">${fmt(s.amount)}</span></span>${ppOf(s.to) ? `<button class="ghost sm pp" type="button" data-pp="${i}">PayPal</button>` : ""}<button class="ghost sm" type="button" data-settle="${i}">Erledigt</button></div>`).join("")}
          <div class="btnrow"><button class="ghost sm" id="summary" type="button">Zwischenstand teilen</button></div>`
       : `<h2>🎉 Alles ausgeglichen</h2><p class="sub">Schließt die Abrechnung ab, dann bleibt die Endabrechnung so stehen.</p>
          <div class="btnrow"><button class="primary" id="closeGroup" type="button">Abrechnung abschließen</button><button class="ghost sm" id="summary" type="button">Teilen</button></div>`;
@@ -945,8 +1006,10 @@ function renderOverview(st) {
       ${pays.length ? pays.map(p => `<div class="srow2">${av(p.paidBy, "s")}<span class="txt">${esc(p.paidBy)} → ${esc(p.shares[0].m)} <span class="num">${fmt(p.amount)}</span></span><span class="pill plus">✓</span></div>`).join("") : `<p class="sub">Es waren keine Rückzahlungen nötig.</p>`}
       <div class="btnrow"><button class="primary" id="summary" type="button">Zusammenfassung teilen</button></div>`;
   }
+  const ppCard = me && isOpen() ? `<div class="card"><h2>Deine PayPal-Adresse</h2><p class="sub" style="margin:-4px 0 10px">Dann können dir andere mit einem Tipp per PayPal zurückzahlen. Gilt für alle deine Gruppen.</p>
+      <div class="inline"><input id="ppInput" placeholder="paypal.me/deinname" value="${esc(ppOf(me) || store.get(PP_KEY, ""))}" autocomplete="off" aria-label="PayPal.me-Name"><button class="ghost" id="ppSave" type="button">Speichern</button></div></div>` : "";
   return `<div class="card"><h2>Wer hat was?</h2><p class="sub" style="margin:-4px 0 6px">Gesamt ${fmt(total)} · Ø ${fmt(Math.round(total / n))} pro Person</p>${rows}</div>
-    <div class="card">${settleBlock}</div>`;
+    <div class="card">${settleBlock}</div>${ppCard}`;
 }
 
 function renderLog() {
@@ -974,16 +1037,73 @@ function summaryText(st) {
   return L.join("\n");
 }
 
+/* ---------- Währungen ---------- */
+const CURS = ["EUR", "CHF", "GBP", "USD", "CZK", "PLN", "HUF", "DKK", "SEK", "NOK", "ISK", "TRY", "RON", "JPY", "THB", "AUD", "CAD", "NZD", "SGD", "HKD", "CNY", "KRW", "INR", "IDR", "MYR", "PHP", "MXN", "BRL", "ZAR", "ILS"];
+const fmtC = (c, cur) => (c / 100).toLocaleString("de-DE", { style: "currency", currency: cur || "EUR" });
+const rateKey = c => "rate:" + c;
+async function fetchRate(cur) {
+  const urls = [`https://api.frankfurter.dev/v1/latest?base=EUR&symbols=${cur}`, `https://api.frankfurter.app/latest?from=EUR&to=${cur}`];
+  for (const u of urls) {
+    try {
+      const r = await fetch(u); if (!r.ok) continue;
+      const j = await r.json(); const v = j.rates && j.rates[cur];
+      if (v) { const o = { r: v, d: j.date || today() }; store.set(rateKey(cur), o); return o; }
+    } catch {}
+  }
+  return null;
+}
+const rateToInput = r => String(+r.toFixed(6)).replace(".", ",");
+const parseRate = v => { const n = Number(String(v).trim().replace(/\s/g, "").replace(",", ".")); return isFinite(n) && n > 0 ? n : NaN; };
+// Verteilt einen Euro-Betrag im Verhältnis der Originalbeträge (Rundungsreste fair verteilt)
+function distribute(total, parts) {
+  const sum = parts.reduce((s, p) => s + p.c, 0);
+  const raw = parts.map(p => ({ m: p.m, x: total * p.c / sum }));
+  const out = raw.map(r => ({ m: r.m, c: Math.floor(r.x), f: r.x - Math.floor(r.x) }));
+  let rest = total - out.reduce((s, o) => s + o.c, 0);
+  [...out].sort((a, b) => b.f - a.f).forEach(o => { if (rest > 0) { o.c++; rest--; } });
+  return out.map(o => ({ m: o.m, c: o.c }));
+}
+
 /* ---------- Ausgabe anlegen / bearbeiten ---------- */
 const dlg = $("#sheet"), F = $("#expForm");
 let sheet = null;
+F.cur.innerHTML = CURS.map(c => `<option value="${c}">${c}</option>`).join("");
+const curNow = () => F.cur.value || "EUR";
+const rateNow = () => curNow() === "EUR" ? 1 : parseRate(F.rate.value);
+const origNow = () => toCents(F.amount.value) || 0;
+const eurNow = () => { const r = rateNow(); return r ? Math.round(origNow() / r) : 0; };
+
+async function setCur(cur, keepRate) {
+  F.cur.value = cur;
+  const foreign = cur !== "EUR";
+  $("#rateRow").hidden = !foreign;
+  $("#rateCur").textContent = cur;
+  if (foreign && !keepRate) {
+    const cached = store.get(rateKey(cur), null);
+    if (cached) { F.rate.value = rateToInput(cached.r); $("#rateInfo").textContent = `Kurs vom ${fmtShortDay(cached.d)} (EZB)`; }
+    else { F.rate.value = ""; $("#rateInfo").textContent = "Kurs wird geladen …"; }
+    const fresh = await fetchRate(cur);
+    if (fresh && F.cur.value === cur) { F.rate.value = rateToInput(fresh.r); $("#rateInfo").textContent = `Aktueller Kurs vom ${fmtShortDay(fresh.d)} (EZB). Du kannst ihn anpassen.`; }
+    else if (!fresh && F.cur.value === cur) $("#rateInfo").textContent = cached ? "Offline: letzter bekannter Kurs. Du kannst ihn anpassen." : "Kein Internet: Bitte den Kurs selbst eintragen.";
+  }
+  refreshAmounts();
+}
+function refreshAmounts() {
+  const foreign = curNow() !== "EUR";
+  $("#eurInfo").textContent = foreign && origNow() && rateNow() ? `≈ ${fmt(eurNow())}` : "";
+  sheet.mode === "equal" ? renderSplit() : updateHint();
+}
+
 function openSheet(e) {
   const g = state.group, me = myName();
   const editable = e ? canEdit(e) : isOpen();
   const owner = e ? isOwner(e) : true;
+  const orig = e && e.orig;
   sheet = { prev: e || null, editable, mode: e && e.splitMode === "exact" ? "exact" : "equal", sel: new Set(e ? e.shares.map(s => s.m) : g.members), exact: {} };
-  if (e && e.splitMode === "exact") e.shares.forEach(s => sheet.exact[s.m] = centsToInput(s.c));
-  F.desc.value = e ? e.desc : ""; F.amount.value = e ? centsToInput(e.amount) : ""; F.date.value = e ? e.date : today();
+  if (e && e.splitMode === "exact") (orig && orig.shares ? orig.shares : e.shares).forEach(s => sheet.exact[s.m] = centsToInput(s.c));
+  F.desc.value = e ? e.desc : "";
+  F.amount.value = e ? centsToInput(orig ? orig.amt : e.amount) : "";
+  F.date.value = e ? e.date : today();
   const payer = e ? e.paidBy : (g.members.includes(me) ? me : g.members[0]);
   F.paidBy.innerHTML = g.members.map(m => `<option value="${esc(m)}" ${m === payer ? "selected" : ""}>${esc(m)}</option>`).join("");
   $("#unlock").checked = !!(e && e.unlocked); $("#unlock").disabled = !owner;
@@ -995,34 +1115,38 @@ function openSheet(e) {
   $("#del").hidden = !e || !editable; $("#save").hidden = !editable;
   $("#cancel").textContent = editable ? "Abbrechen" : "Schließen";
   $("#formErr").textContent = ""; $("#save").disabled = false;
+  if (orig) { F.rate.value = rateToInput(orig.rate); $("#rateInfo").textContent = "Kurs wie beim Eintragen."; setCur(orig.cur, true); }
+  else setCur(e ? "EUR" : (g.defaultCur || "EUR"));
   setMode(sheet.mode);
   dlg.showModal();
   if (!e) setTimeout(() => F.desc.focus(), 60);
 }
-function setMode(mode) { sheet.mode = mode; $$(".seg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === mode)); renderSplit(); }
+function setMode(mode) { sheet.mode = mode; $$("#expForm .seg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === mode)); renderSplit(); }
 function renderSplit() {
-  const members = state.group.members, amount = toCents(F.amount.value) || 0;
+  const members = state.group.members, amount = origNow(), cur = curNow();
   if (sheet.mode === "equal") {
     const n = members.filter(m => sheet.sel.has(m)).length;
     $("#splitRows").innerHTML = members.map(m => `<label class="srow"><input type="checkbox" data-m="${esc(m)}" ${sheet.sel.has(m) ? "checked" : ""}>${av(m, "s")}<span class="nm">${esc(m)}</span>
-      <span class="amt">${sheet.sel.has(m) && amount > 0 && n ? fmt(Math.round(amount / n)) : ""}</span></label>`).join("");
+      <span class="amt">${sheet.sel.has(m) && amount > 0 && n ? fmtC(Math.round(amount / n), cur) : ""}</span></label>`).join("");
   } else {
     $("#splitRows").innerHTML = members.map(m => `<label class="srow">${av(m, "s")}<span class="nm">${esc(m)}</span><input inputmode="decimal" data-m="${esc(m)}" value="${esc(sheet.exact[m] || "")}" placeholder="0,00" autocomplete="off"></label>`).join("");
   }
   updateHint();
 }
 function updateHint() {
-  const amount = toCents(F.amount.value) || 0, h = $("#splitHint");
+  const amount = origNow(), cur = curNow(), h = $("#splitHint");
   if (sheet.mode === "equal") {
     const n = state.group.members.filter(m => sheet.sel.has(m)).length;
     h.textContent = n ? `Wird auf ${n} ${n === 1 ? "Person" : "Personen"} aufgeteilt.` : "Wähle mindestens eine Person aus.";
   } else {
     const sum = state.group.members.reduce((s, m) => s + (toCents(sheet.exact[m] || "") || 0), 0), diff = amount - sum;
-    h.textContent = diff === 0 ? `Passt genau: ${fmt(sum)} verteilt.` : diff > 0 ? `Noch ${fmt(diff)} zu verteilen.` : `${fmt(-diff)} zu viel verteilt.`;
+    h.textContent = diff === 0 ? `Passt genau: ${fmtC(sum, cur)} verteilt.` : diff > 0 ? `Noch ${fmtC(diff, cur)} zu verteilen.` : `${fmtC(-diff, cur)} zu viel verteilt.`;
   }
 }
-$$(".seg button").forEach(b => b.onclick = () => setMode(b.dataset.mode));
-F.amount.addEventListener("input", () => sheet.mode === "equal" ? renderSplit() : updateHint());
+$$("#expForm .seg button").forEach(b => b.onclick = () => setMode(b.dataset.mode));
+F.amount.addEventListener("input", refreshAmounts);
+F.rate.addEventListener("input", refreshAmounts);
+F.cur.addEventListener("change", () => setCur(F.cur.value));
 $("#splitRows").addEventListener("input", e => {
   const m = e.target.dataset.m; if (m == null) return;
   if (e.target.type === "checkbox") { e.target.checked ? sheet.sel.add(m) : sheet.sel.delete(m); renderSplit(); }
@@ -1039,33 +1163,41 @@ F.onsubmit = e => {
   e.preventDefault();
   if (!sheet.editable) return;
   const err = msg => { $("#formErr").textContent = msg; };
-  const desc = F.desc.value.trim(), amount = toCents(F.amount.value), members = state.group.members;
+  const desc = F.desc.value.trim(), orig = toCents(F.amount.value), members = state.group.members, cur = curNow();
   if (!desc) return err("Wofür war die Ausgabe?");
-  if (!(amount > 0)) return err("Gib einen gültigen Betrag ein, z. B. 12,50.");
+  if (!(orig > 0)) return err("Gib einen gültigen Betrag ein, z. B. 12,50.");
+  const rate = rateNow();
+  if (cur !== "EUR" && !rate) return err(`Gib den Wechselkurs ein (1 € = ? ${cur}).`);
   if (!F.date.value) return err("Wähle ein Datum.");
-  let shares;
+  const amount = cur === "EUR" ? orig : Math.round(orig / rate);
+  if (!(amount > 0)) return err("Der umgerechnete Betrag ist zu klein.");
+  let shares, origShares = null;
   if (sheet.mode === "equal") {
     const sel = members.filter(m => sheet.sel.has(m));
     if (!sel.length) return err("Wähle mindestens eine Person aus.");
     const base = Math.floor(amount / sel.length), rest = amount - base * sel.length;
     shares = sel.map((m, i) => ({ m, c: base + (i < rest ? 1 : 0) }));
   } else {
-    shares = members.map(m => ({ m, c: toCents(sheet.exact[m] || "") }));
-    if (shares.some(s => isNaN(s.c) || s.c < 0)) return err("Mindestens ein Betrag ist ungültig.");
-    shares = shares.filter(s => s.c > 0);
-    const sum = shares.reduce((s, x) => s + x.c, 0);
-    if (sum !== amount) return err(`Die Einzelbeträge ergeben ${fmt(sum)}, die Ausgabe ist ${fmt(amount)}.`);
+    let parts = members.map(m => ({ m, c: toCents(sheet.exact[m] || "") }));
+    if (parts.some(s => isNaN(s.c) || s.c < 0)) return err("Mindestens ein Betrag ist ungültig.");
+    parts = parts.filter(s => s.c > 0);
+    const sum = parts.reduce((s, x) => s + x.c, 0);
+    if (sum !== orig) return err(`Die Einzelbeträge ergeben ${fmtC(sum, cur)}, die Ausgabe ist ${fmtC(orig, cur)}.`);
+    shares = cur === "EUR" ? parts : distribute(amount, parts);
+    if (cur !== "EUR") origShares = parts;
   }
   const prev = sheet.prev, me = myName(), owner = prev ? isOwner(prev) : true;
   const unlocked = owner ? $("#unlock").checked : !!prev.unlocked;
   const data = { kind: "expense", desc, amount, date: F.date.value, paidBy: F.paidBy.value, shares, splitMode: sheet.mode,
     createdAt: prev ? (prev.createdAt || Date.now()) : Date.now(), createdBy: prev ? ownerOf(prev) : me, unlocked, deleted: false };
+  if (cur !== "EUR") { data.orig = { cur, amt: orig, rate }; if (origShares) data.orig.shares = origShares; store.set(rateKey(cur), { r: rate, d: today() }); }
   if (prev) { data.updatedAt = Date.now(); data.updatedBy = me; }
+  const label = cur === "EUR" ? fmt(amount) : `${fmtC(orig, cur)} ≈ ${fmt(amount)}`;
   let text;
-  if (!prev) text = `hat „${desc}“ (${fmt(amount)}) hinzugefügt`;
+  if (!prev) text = `hat „${desc}“ (${label}) hinzugefügt`;
   else {
     const ch = [];
-    if (prev.amount !== amount) ch.push(`${fmt(prev.amount)} → ${fmt(amount)}`);
+    if (prev.amount !== amount) ch.push(`${fmt(prev.amount)} → ${label}`);
     if (prev.desc !== desc) ch.push(`vorher „${prev.desc}“`);
     if (prev.paidBy !== data.paidBy) ch.push(`bezahlt von ${data.paidBy} statt ${prev.paidBy}`);
     if (!!prev.unlocked !== unlocked) ch.push(unlocked ? "für alle freigegeben" : "wieder gesperrt");
@@ -1075,9 +1207,119 @@ F.onsubmit = e => {
   $("#save").disabled = true;
   commit(b => b.set(ref, data), text);
   dlg.close();
-  if (state.tab !== "ausgaben" && state.tab !== "abrechnung") { state.tab = "ausgaben"; }
   toast(prev ? "Änderung gespeichert" : "Ausgabe gespeichert");
 };
+
+/* ---------- PayPal ---------- */
+const PP_KEY = "paypal";
+const normPP = v => String(v || "").trim().replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/^(paypal\.me|paypal\.com\/paypalme)\//i, "").replace(/\/.*$/, "").replace(/^@/, "");
+const ppOf = m => (state.group.paypal || {})[m] || "";
+const ppLink = (user, cents) => `https://paypal.me/${encodeURIComponent(user)}/${(cents / 100).toFixed(2)}EUR`;
+let ppSynced = "";
+function syncMyPayPal() {
+  const me = myName(), mine = store.get(PP_KEY, "");
+  if (!me || !mine || ppOf(me) === mine || ppSynced === state.gid + me + mine || !isOpen()) return;
+  ppSynced = state.gid + me + mine;
+  groupRef().update({ paypal: { ...(state.group.paypal || {}), [me]: mine } }).catch(() => {});
+}
+function savePayPal(v) {
+  const me = myName(); if (!me) return;
+  const user = normPP(v);
+  if (v && !/^[A-Za-z0-9._-]{2,40}$/.test(user)) return toast("Das sieht nicht nach einem PayPal.me-Namen aus.");
+  store.set(PP_KEY, user);
+  ppSynced = state.gid + me + user;
+  commit(() => {}, user ? "hat die PayPal-Adresse hinterlegt" : "hat die PayPal-Adresse entfernt", { paypal: { ...(state.group.paypal || {}), [me]: user } })
+    .then(() => toast(user ? "PayPal gespeichert – gilt auch für deine anderen Gruppen" : "PayPal entfernt"));
+}
+let qrLibP = null;
+function loadQr() {
+  return qrLibP || (qrLibP = new Promise((res, rej) => {
+    const s = document.createElement("script");
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js";
+    s.onload = () => res(window.qrcode); s.onerror = () => { qrLibP = null; rej(); };
+    document.head.appendChild(s);
+  }));
+}
+async function openPayPal(s) {
+  const user = ppOf(s.to); if (!user) return;
+  const link = ppLink(user, s.amount);
+  $("#ppTitle").textContent = `${s.from} zahlt ${s.to}`;
+  $("#ppAmount").textContent = fmt(s.amount);
+  $("#ppOpen").href = link;
+  $("#ppUser").textContent = "paypal.me/" + user;
+  $("#ppShare").onclick = () => shareText(`Hallo ${s.from}, du kannst mir ${fmt(s.amount)} für „${state.group.name}“ per PayPal schicken:\n${link}`, "PayPal");
+  const box = $("#ppQr"); box.innerHTML = `<p class="hint">QR-Code wird erstellt …</p>`;
+  $("#ppSheet").showModal();
+  try {
+    const qrcode = await loadQr();
+    const q = qrcode(0, "M"); q.addData(link); q.make();
+    box.innerHTML = q.createSvgTag({ cellSize: 6, margin: 2, scalable: true });
+  } catch { box.innerHTML = `<p class="hint">QR-Code nur mit Internet. Der Link oben funktioniert trotzdem.</p>`; }
+}
+
+/* ---------- Listen ---------- */
+const itemsRef = () => groupRef().collection("items");
+const LISTS = { todo: { label: "To-dos", who: "Wer?", ph: "z. B. Fähre buchen" }, pack: { label: "Packliste", who: "Wer bringt’s?", ph: "z. B. Reiseadapter" }, mine: { label: "Meine Liste", who: "", ph: "z. B. Ladekabel" } };
+const SUGGEST = {
+  todo: ["Unterkunft buchen", "Mietwagen reservieren", "Reiseversicherung prüfen", "Restaurant reservieren", "Haustür-Schlüssel übergeben"],
+  pack: ["Reiseadapter", "Erste-Hilfe-Set", "Sonnencreme", "Powerbank", "Spielkarten", "Musikbox"],
+  mine: ["Ausweis / Reisepass", "Krankenversicherungskarte", "Ladekabel", "Kopfhörer", "Medikamente", "Zahnbürste", "Sonnenbrille", "Badesachen"]
+};
+function listItems(k) {
+  const me = myName();
+  return state.items.filter(i => !i.deleted && i.list === k && (k !== "mine" || i.owner === me))
+    .sort((a, b) => (a.done - b.done) || a.createdAt - b.createdAt);
+}
+function renderLists() {
+  const k = state.listTab, me = myName(), items = listItems(k), done = items.filter(i => i.done).length;
+  const L = LISTS[k], editable = isOpen();
+  const seg = `<div class="seg wide" role="group" aria-label="Liste wählen">${Object.entries(LISTS).map(([key, l]) => `<button type="button" data-list="${key}" aria-pressed="${key === k}">${l.label}</button>`).join("")}</div>`;
+  if (k === "mine" && !me) return seg + `<div class="empty"><p>Wähle oben aus, wer du bist. Dann bekommst du deine eigene Packliste.</p></div>`;
+  const add = editable ? `<form class="inline addrow" id="itemForm"><input name="text" maxlength="80" placeholder="${L.ph}" aria-label="Neuer Eintrag" autocomplete="off"><button class="primary" type="submit" aria-label="Hinzufügen">${ICON.plus}</button></form>` : "";
+  const rows = items.map(i => `<li class="lrow${i.done ? " done" : ""}">
+      <label class="lcheck"><input type="checkbox" data-done="${i.id}" ${i.done ? "checked" : ""} ${editable ? "" : "disabled"}><span class="ltext">${esc(i.text)}</span></label>
+      ${L.who ? `<button type="button" class="whochip" data-who="${i.id}" ${editable ? "" : "disabled"}>${i.who ? `${av(i.who, "s")}<span>${esc(i.who)}</span>` : `<span>${L.who}</span>`}</button>` : ""}
+      ${editable ? `<button type="button" class="xbtn" data-rmitem="${i.id}" aria-label="${esc(i.text)} löschen">×</button>` : ""}
+    </li>`).join("");
+  const sub = k === "mine" ? "Nur du siehst diese Liste." : k === "pack" ? "Gemeinsame Sachen – tippe auf „Wer bringt’s?“, damit nichts doppelt mitkommt." : "Aufgaben für alle – tippe auf „Wer?“, um sie jemandem zuzuteilen.";
+  return seg + `<div class="card"><p class="sub" style="margin:0 0 10px">${sub}</p>${add}
+    ${items.length ? `<p class="hint">${done} von ${items.length} erledigt</p><ul class="llist">${rows}</ul>` : `<p class="hint" style="margin-top:12px">Noch leer.</p>`}
+    ${editable ? `<div class="btnrow"><button type="button" class="ghost sm" id="suggest">💡 Vorschläge hinzufügen</button></div>` : ""}</div>`;
+}
+function bindLists() {
+  $$("[data-list]").forEach(b => b.onclick = () => { state.listTab = b.dataset.list; renderGroup(); });
+  const f = $("#itemForm");
+  if (f) f.onsubmit = e => {
+    e.preventDefault();
+    if (needMe()) return;
+    const text = f.text.value.trim(); if (!text) return;
+    itemsRef().add({ list: state.listTab, text, done: false, who: "", owner: state.listTab === "mine" ? myName() : "", createdBy: myName(), createdAt: Date.now(), deleted: false }).catch(showError);
+    f.text.value = ""; setTimeout(() => { const i = $("#itemForm input"); if (i) i.focus(); }, 50);
+  };
+  $$("[data-done]").forEach(c => c.onchange = () => {
+    if (needMe()) { c.checked = !c.checked; return; }
+    itemsRef().doc(c.dataset.done).update({ done: c.checked, doneBy: c.checked ? myName() : "" }).catch(showError);
+  });
+  $$("[data-rmitem]").forEach(b => b.onclick = () => itemsRef().doc(b.dataset.rmitem).update({ deleted: true, deletedBy: myName() }).catch(showError));
+  $$("[data-who]").forEach(b => b.onclick = () => {
+    const id = b.dataset.who, opts = [...state.group.members, ""];
+    $("#menuList").innerHTML = opts.map((m, k) => `<li><button type="button" data-k="${k}">${m ? av(m, "s") : `<span class="mi">–</span>`}<span>${m ? esc(m) : "Niemand"}</span></button></li>`).join("");
+    $$("#menuList button").forEach(x => x.onclick = () => { $("#menuSheet").close(); itemsRef().doc(id).update({ who: opts[+x.dataset.k] }).catch(showError); });
+    $("#menuSheet").showModal();
+  });
+  const sg = $("#suggest");
+  if (sg) sg.onclick = () => {
+    if (needMe()) return;
+    const k = state.listTab, have = new Set(listItems(k).map(i => i.text.toLowerCase()));
+    const add = SUGGEST[k].filter(t => !have.has(t.toLowerCase()));
+    if (!add.length) return toast("Alle Vorschläge sind schon drin.");
+    const b = db.batch(), now = Date.now();
+    add.forEach((text, n) => b.set(itemsRef().doc(), { list: k, text, done: false, who: "", owner: k === "mine" ? myName() : "", createdBy: myName(), createdAt: now + n, deleted: false }));
+    b.commit().catch(showError);
+    toast(`${add.length} Vorschläge hinzugefügt`);
+  };
+}
+
 
 /* ---------- Reiseplan ---------- */
 const PLAN_TYPES = {
