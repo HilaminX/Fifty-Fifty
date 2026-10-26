@@ -16,244 +16,258 @@
 <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#F3F1EC; --surface:#FFFFFF; --ink:#1E2A38; --muted:#5E6875; --line:#DDD8CC;
-  --plus:#1F7A5A; --minus:#B83A52; --accent:#FFC93C; --accent-ink:#1E2A38; --link:#8A5604;
+  --bg:#F3F1EC; --surface:#FFFFFF; --surface2:#F7F5F0; --ink:#1E2A38; --muted:#667180; --line:#E5E0D6;
+  --hero:#1E2A38; --hero-ink:#F7F3EA; --hero-muted:#A9B4C1; --hero-plus:#7BE3B6; --hero-minus:#FFA3B5;
+  --accent:#FFC93C; --accent-ink:#1E2A38; --link:#8A5604;
+  --plus:#1F7A5A; --minus:#B83A52;
+  --shadow:0 1px 2px rgba(30,42,56,.05), 0 8px 24px -14px rgba(30,42,56,.35);
   --font:"Familjen Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --bg:#141C26; --surface:#1E2A38; --ink:#F2EEE4; --muted:#A3ADB8; --line:#2E3B4B;
-    --plus:#4CC395; --minus:#F07D93; --accent:#FFC93C; --accent-ink:#141C26; --link:#FFC93C;
+    --bg:#10161E; --surface:#1A2430; --surface2:#212D3B; --ink:#EEF1F4; --muted:#9AA6B2; --line:#2A3746;
+    --hero:#22303F; --hero-ink:#F7F3EA; --hero-muted:#9AA6B2;
+    --link:#FFC93C; --plus:#4CC395; --minus:#F07D93; --shadow:none;
+    color-scheme: dark;
   }
 }
 *{box-sizing:border-box}
 [hidden]{display:none !important}
-html{height:100%}
+html{height:100%; -webkit-tap-highlight-color:transparent}
 body{
   margin:0; min-height:100%; background:var(--bg); color:var(--ink);
-  font-family:var(--font); font-size:17px; line-height:1.45;
-  -webkit-font-smoothing:antialiased;
-  padding:env(safe-area-inset-top,0px) 0 calc(96px + env(safe-area-inset-bottom,0px));
+  font-family:var(--font); font-size:17px; line-height:1.45; -webkit-font-smoothing:antialiased;
+  padding:env(safe-area-inset-top,0px) 0 calc(150px + env(safe-area-inset-bottom,0px));
 }
-#app{max-width:560px; margin:0 auto; padding:20px}
-h1,h2{margin:0; line-height:1.1}
-h1{font-size:2.2rem; font-weight:700; letter-spacing:-0.02em}
-h2{font-size:1.15rem; font-weight:600; margin-bottom:12px}
+body.home{padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
+#app{max-width:600px; margin:0 auto; padding:12px 16px}
+h1,h2,h3{margin:0; line-height:1.15}
+h2{font-size:1.1rem; font-weight:700; margin-bottom:10px}
 a{color:var(--link)}
-.num{font-variant-numeric:tabular-nums}
-
 button,input,select,textarea{font:inherit; color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:3px solid var(--accent); outline-offset:2px}
-label{display:block; font-size:.9rem; color:var(--muted); margin-bottom:14px}
+.num{font-variant-numeric:tabular-nums}
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+
+/* Formulare */
+label{display:block; font-size:.88rem; color:var(--muted); margin-bottom:14px; font-weight:500}
 input,select,textarea{
-  display:block; width:100%; margin-top:6px; padding:12px 14px;
-  background:var(--bg); border:1.5px solid var(--line); border-radius:12px; color:var(--ink);
+  display:block; width:100%; margin-top:6px; padding:12px 14px; background:var(--surface2);
+  border:1.5px solid var(--line); border-radius:12px; color:var(--ink); font-weight:400;
 }
 input:focus,select:focus,textarea:focus{border-color:var(--accent); outline:none}
 textarea{resize:vertical}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.opt{font-size:.78rem; font-weight:400}
 
-.primary{
-  background:var(--accent); color:var(--accent-ink); border:0; border-radius:999px;
-  padding:14px 22px; font-weight:600; text-decoration:none; display:inline-block;
-}
+/* Buttons */
+.primary{background:var(--accent); color:var(--accent-ink); border:0; border-radius:999px; padding:13px 22px; font-weight:700; text-decoration:none; display:inline-block; text-align:center}
 .primary:disabled{opacity:.5}
-.ghost{background:transparent; border:1.5px solid var(--line); border-radius:999px; padding:9px 16px; font-weight:500}
-.danger{background:transparent; border:0; color:var(--minus); font-weight:600; padding:10px 4px; margin-right:auto}
+.ghost{background:var(--surface); border:1.5px solid var(--line); border-radius:999px; padding:10px 18px; font-weight:600; color:var(--ink); text-decoration:none; display:inline-block; text-align:center}
+.sm{padding:7px 14px; font-size:.88rem}
+.block-btn{display:block; width:100%}
+.danger{background:transparent; border:0; color:var(--minus); font-weight:700; padding:10px 4px; margin-right:auto}
+.dangerline{color:var(--minus); border-color:color-mix(in srgb, var(--minus) 40%, transparent)}
+.linkbtn{background:none; border:0; padding:0; color:var(--link); font-weight:600; text-decoration:underline; text-underline-offset:3px}
+.iconbtn{display:inline-flex; align-items:center; justify-content:center; gap:6px; min-width:42px; height:42px; padding:0 12px; border-radius:999px; border:0; background:var(--surface); color:var(--ink); font-weight:600; box-shadow:var(--shadow)}
+.iconbtn svg{width:20px; height:20px}
 
-.block{background:var(--surface); border-radius:20px; padding:20px; margin-top:20px}
-
-/* Home */
-.home-head{padding:24px 0 4px}
-.home-head h1{font-size:3rem}
-.home-head .logo{width:64px; height:64px; display:block; margin-bottom:14px; border-radius:16px}
-.home-head p{color:var(--muted); max-width:34ch; margin:10px 0 0}
-.groups{list-style:none; margin:0; padding:0}
-.groups a{display:block; padding:14px 0; border-top:1px solid var(--line); text-decoration:none; color:var(--ink); font-weight:500}
-.groups li:first-child a{border-top:0}
-
-/* Group */
-.back{text-decoration:none; font-weight:500; display:inline-block; padding:4px 0 12px}
-.sub{color:var(--muted); margin:6px 0 0}
-.mine{margin:22px 0 4px}
-.mine .big{font-size:2.6rem; font-weight:700; letter-spacing:-0.02em; line-height:1}
-.mine .lbl{color:var(--muted); font-size:.95rem; margin-top:4px}
-.plus{color:var(--plus)} .minus{color:var(--minus)}
-.row{display:flex; gap:12px; align-items:flex-end; margin-top:18px}
-.row label{margin:0; flex:1}
-.row select{padding:9px 12px}
-
-.tabs{display:flex; gap:24px; margin:24px 0 8px; border-bottom:1.5px solid var(--line)}
-.tabs button{background:none; border:0; padding:10px 0; color:var(--muted); font-weight:600; border-bottom:3px solid transparent; margin-bottom:-1.5px}
-.tabs button[aria-selected="true"]{color:var(--ink); border-color:var(--ink)}
-
+/* Karten & Listen */
+.card{background:var(--surface); border-radius:18px; padding:16px; margin-top:12px; box-shadow:var(--shadow)}
+.section-title{display:flex; align-items:center; justify-content:space-between; margin:22px 4px 8px; font-size:.82rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted)}
 .list{list-style:none; margin:0; padding:0}
-.day{color:var(--muted); font-size:.85rem; padding:18px 0 6px}
-.item{
-  display:flex; align-items:center; gap:12px; width:100%; text-align:left;
-  background:var(--surface); border:0; border-radius:14px; padding:14px 16px; margin-bottom:6px;
-}
+.day{color:var(--muted); font-size:.82rem; font-weight:600; padding:16px 4px 6px}
+.sub{color:var(--muted); margin:6px 0 0; font-size:.92rem}
+.empty{text-align:center; color:var(--muted); padding:36px 16px}
+.empty .big{font-size:2.6rem; display:block; margin-bottom:8px}
+.loading{color:var(--muted); padding:48px 0; text-align:center}
+.badge{display:inline-block; font-size:.7rem; font-weight:700; padding:2px 8px; border-radius:999px; background:var(--accent); color:var(--accent-ink); vertical-align:middle; margin-left:8px}
+.badge.soft{background:var(--line); color:var(--ink)}
+.dot{display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--minus); margin-left:8px; vertical-align:middle}
+.plus{color:var(--plus)} .minus{color:var(--minus)}
+.note{background:color-mix(in srgb, var(--accent) 18%, transparent); border-radius:14px; padding:12px 14px; margin-top:12px; font-size:.88rem}
+.banner{border-radius:14px; padding:12px 14px; margin-top:12px; font-weight:600; font-size:.92rem}
+.banner.ok{background:color-mix(in srgb, var(--plus) 15%, transparent); color:var(--plus)}
+.banner.warn{background:color-mix(in srgb, var(--minus) 13%, transparent); color:var(--minus)}
+
+/* Avatare */
+.av{display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border-radius:50%; font-weight:700; font-size:.95rem; color:#fff; flex-shrink:0}
+.av.s{width:28px; height:28px; font-size:.75rem}
+.avs{display:flex}
+.avs .av{border:2px solid var(--hero); margin-left:-8px}
+.avs .av:first-child{margin-left:0}
+
+/* Startseite */
+.topbar{display:flex; align-items:center; gap:10px; padding:6px 0 4px}
+.topbar .grow{flex:1; min-width:0}
+.brand{display:flex; align-items:center; gap:12px; padding:14px 0 6px}
+.brand .logo{width:46px; height:46px; border-radius:13px; display:block}
+.brand h1{font-size:1.7rem; font-weight:700; letter-spacing:-.02em}
+.brand p{margin:2px 0 0; color:var(--muted); font-size:.9rem}
+.gcard{display:flex; gap:14px; align-items:center; width:100%; text-align:left; background:var(--surface); border:0; border-radius:18px; padding:14px; margin-top:10px; box-shadow:var(--shadow); text-decoration:none; color:var(--ink)}
+.gemoji{width:52px; height:52px; border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:1.7rem; flex-shrink:0}
+.gtxt{flex:1; min-width:0}
+.gtxt strong{display:block; font-size:1.05rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.gtxt small{display:block; color:var(--muted); font-size:.85rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:1px}
+.chev{color:var(--muted); font-size:1.4rem}
+.homeactions{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:18px}
+.homeactions .primary,.homeactions .ghost{padding:15px 10px}
+details.fold{margin-top:6px}
+details.fold summary{list-style:none; cursor:pointer}
+details.fold summary::-webkit-details-marker{display:none}
+details.fold summary .section-title::after{content:"›"; font-size:1.2rem; transition:transform .2s}
+details.fold[open] summary .section-title::after{transform:rotate(90deg)}
+.footer{text-align:center; margin-top:34px; color:var(--muted); font-size:.9rem}
+
+/* Gruppe: Kopfbereich */
+.hero{background:var(--hero); color:var(--hero-ink); border-radius:24px; padding:18px 18px 16px; margin-top:8px}
+.hero .htop{display:flex; gap:14px; align-items:center}
+.hero .gemoji{background:rgba(255,255,255,.1)}
+.hero h1{font-size:1.55rem; font-weight:700; letter-spacing:-.01em; overflow-wrap:anywhere}
+.hero .hsub{color:var(--hero-muted); font-size:.88rem; margin-top:4px; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.hstats{display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:16px; padding-top:14px; border-top:1px solid rgba(255,255,255,.12)}
+.hstats small{display:block; color:var(--hero-muted); font-size:.75rem; font-weight:600}
+.hstats b{display:block; font-size:clamp(.95rem,4.2vw,1.15rem); font-weight:700; font-variant-numeric:tabular-nums; margin-top:2px; overflow-wrap:anywhere}
+.hstats .hp{color:var(--hero-plus)} .hstats .hm{color:var(--hero-minus)}
+.hchip{display:inline-flex; gap:6px; align-items:center; background:var(--accent); color:var(--accent-ink); font-weight:700; font-size:.8rem; padding:4px 10px; border-radius:999px}
+.who{background:rgba(255,255,255,.08); border-radius:16px; padding:14px; margin-top:14px}
+.who p{margin:0 0 10px; font-size:.92rem}
+.chips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{display:inline-flex; align-items:center; gap:8px; border:0; background:var(--hero-ink); color:var(--hero); border-radius:999px; padding:5px 14px 5px 5px; font-weight:700}
+
+/* Untere Navigation & Plus-Knopf */
+.nav{position:fixed; left:0; right:0; bottom:0; z-index:20; background:var(--surface); border-top:1px solid var(--line); padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav-in{max-width:600px; margin:0 auto; display:grid; grid-template-columns:repeat(4,1fr)}
+.nav button{background:none; border:0; padding:9px 4px 8px; display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--muted); font-size:.72rem; font-weight:600}
+.nav svg{width:24px; height:24px}
+.nav button[aria-current="page"]{color:var(--ink)}
+.nav button[aria-current="page"] .ni{background:var(--accent); color:var(--accent-ink)}
+.ni{display:flex; align-items:center; justify-content:center; width:52px; height:30px; border-radius:999px; transition:background .2s}
+.fab{position:fixed; z-index:21; right:max(18px, calc(50% - 282px)); bottom:calc(84px + env(safe-area-inset-bottom,0px));
+  width:60px; height:60px; border-radius:20px; border:0; background:var(--accent); color:var(--accent-ink);
+  display:flex; align-items:center; justify-content:center; box-shadow:0 10px 24px -8px rgba(154,95,5,.6)}
+.fab svg{width:28px; height:28px}
+
+/* Ausgaben */
+.item{display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:var(--surface); border:0; border-radius:16px; padding:12px 14px; margin-bottom:6px; color:var(--ink); box-shadow:var(--shadow)}
 .item .txt{flex:1; min-width:0}
 .item strong{display:block; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-.item small{display:block; color:var(--muted); font-size:.85rem}
-.item .amt{font-weight:600; font-variant-numeric:tabular-nums; white-space:nowrap}
-.item.pay{background:transparent; border:1.5px dashed var(--line)}
+.item small{display:block; color:var(--muted); font-size:.82rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.item .right{text-align:right; flex-shrink:0}
+.item .amt{display:block; font-weight:700; font-variant-numeric:tabular-nums}
+.item .mine{display:block; font-size:.76rem; font-weight:600}
+.item.pay{background:transparent; border:1.5px dashed var(--line); box-shadow:none}
+.lock{font-size:.72rem; margin-left:6px}
+.picon{font-size:1.35rem; width:38px; height:38px; display:flex; align-items:center; justify-content:center; background:var(--surface2); border-radius:12px; flex-shrink:0}
 
-.bal{display:grid; grid-template-columns:minmax(70px,1fr) 2fr auto; gap:10px; align-items:center; padding:10px 0}
-.bal .name{font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-.bal .amt{font-weight:600; font-variant-numeric:tabular-nums; text-align:right; min-width:84px}
-.bar{display:grid; grid-template-columns:1fr 1fr; height:14px; border-left:0}
-.bar .l{display:flex; justify-content:flex-end; border-right:2px solid var(--ink)}
-.bar span{display:block; height:100%; border-radius:4px}
-.bar .l span{background:var(--minus); border-radius:4px 0 0 4px}
-.bar .r span{background:var(--plus); border-radius:0 4px 4px 0}
+/* Abrechnung */
+.prow{display:flex; gap:12px; align-items:center; padding:11px 0; border-top:1px solid var(--line)}
+.prow:first-of-type{border-top:0}
+.prow .txt{flex:1; min-width:0}
+.pname{font-weight:700}
+.pnums{color:var(--muted); font-size:.84rem; display:flex; gap:12px; flex-wrap:wrap}
+.pnums b{color:var(--ink); font-weight:600; font-variant-numeric:tabular-nums}
+.pill{font-weight:700; font-variant-numeric:tabular-nums; font-size:.9rem; padding:5px 10px; border-radius:999px; white-space:nowrap}
+.pill.plus{background:color-mix(in srgb, var(--plus) 14%, transparent)}
+.pill.minus{background:color-mix(in srgb, var(--minus) 13%, transparent)}
+.pill.zero{background:var(--surface2); color:var(--muted)}
+.srow2{display:flex; align-items:center; gap:10px; padding:11px 0; border-top:1px solid var(--line)}
+.srow2:first-of-type{border-top:0}
+.srow2 .txt{flex:1; min-width:0; font-size:.95rem}
+.arrow{color:var(--muted)}
+.btnrow{display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; align-items:center}
 
-.settle{list-style:none; margin:0; padding:0}
-.settle li{display:flex; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--line)}
-.settle li:first-child{border-top:0}
-.settle .txt{flex:1}
-.settle .ghost{padding:7px 14px; font-size:.9rem}
+/* Verlauf */
+.loglist{list-style:none; margin:0; padding:0}
+.loglist li{display:flex; gap:12px; align-items:center; padding:10px 0; border-top:1px solid var(--line); font-size:.93rem}
+.loglist li:first-child{border-top:0}
+.loglist li>div{flex:1; min-width:0}
+.loglist small{display:block; color:var(--muted); font-size:.78rem; margin-top:2px}
 
-.inline{display:flex; gap:10px}
-.inline input{margin:0}
-.inline button{flex-shrink:0}
+/* Reiseplan */
+.countdown{display:flex; align-items:baseline; gap:10px; background:var(--surface); border-radius:18px; padding:14px 18px; margin-top:12px; box-shadow:var(--shadow)}
+.countdown b{font-size:2rem; font-weight:700; letter-spacing:-.02em; color:var(--link)}
+.countdown span{color:var(--muted); font-weight:600}
+.pitem{background:var(--surface); border-radius:16px; margin-bottom:6px; overflow:hidden; box-shadow:var(--shadow)}
+.pitem.past{opacity:.55}
+.pmain{display:flex; gap:12px; width:100%; text-align:left; background:none; border:0; padding:13px 14px; align-items:flex-start; color:var(--ink)}
+.ptxt{flex:1; min-width:0}
+.ptxt strong{display:block; font-weight:600}
+.ptxt small{display:block; color:var(--muted); font-size:.84rem; white-space:pre-line; margin-top:2px}
+.ptime{display:block; color:var(--link); font-size:.8rem; font-weight:700; font-variant-numeric:tabular-nums}
+.pextra{display:flex; flex-wrap:wrap; gap:6px; padding:0 14px 12px 64px}
+.chipline{display:inline-flex; align-items:center; gap:4px; max-width:100%; background:var(--surface2); border:1px solid var(--line); border-radius:999px; padding:5px 12px; font-size:.8rem; color:var(--ink); text-decoration:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.offl{color:var(--plus); font-size:.75rem; font-weight:700; white-space:nowrap}
 
-.empty{text-align:center; color:var(--muted); padding:48px 12px}
-.empty .primary{margin-top:16px}
-.loading{color:var(--muted); padding:48px 0; text-align:center}
-
-.fab{
-  position:fixed; left:50%; transform:translateX(-50%);
-  bottom:calc(18px + env(safe-area-inset-bottom,0px));
-  width:min(520px, calc(100% - 40px)); padding:16px; font-size:1.05rem;
-  box-shadow:0 8px 24px -8px var(--accent);
-}
-
-/* Sheet */
-dialog{
-  border:0; padding:0; background:var(--surface); color:var(--ink);
-  width:100%; max-width:560px; max-height:92vh; margin:auto auto 0;
-  border-radius:24px 24px 0 0; overflow:auto;
-}
-@media (min-width:640px){ dialog{margin:auto; border-radius:24px} }
-dialog::backdrop{background:rgba(10,20,30,.45)}
+/* Bottom-Sheets */
+dialog{border:0; padding:0; background:var(--surface); color:var(--ink); width:100%; max-width:600px; max-height:92vh; margin:auto auto 0; border-radius:26px 26px 0 0; overflow:auto}
+@media (min-width:640px){ dialog{margin:auto; border-radius:26px} }
+dialog::backdrop{background:rgba(10,18,28,.5)}
 dialog[open]{animation:up .22s ease-out}
-@keyframes up{from{transform:translateY(24px); opacity:0}}
+@keyframes up{from{transform:translateY(30px); opacity:0}}
 @media (prefers-reduced-motion:reduce){ dialog[open]{animation:none} }
-#expForm{padding:24px 20px calc(20px + env(safe-area-inset-bottom,0px))}
-.two{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-fieldset{border:0; padding:0; margin:4px 0 0}
-legend{font-size:.9rem; color:var(--muted); margin-bottom:8px; padding:0}
-.seg{display:inline-flex; background:var(--bg); border-radius:999px; padding:4px; margin-bottom:10px}
+.sheet{padding:10px 20px calc(20px + env(safe-area-inset-bottom,0px))}
+.sheet::before{content:""; display:block; width:40px; height:5px; border-radius:3px; background:var(--line); margin:0 auto 14px}
+.sheet h2{font-size:1.3rem; margin-bottom:16px}
+fieldset{border:0; padding:0; margin:0; min-width:0}
+legend{font-size:.88rem; color:var(--muted); margin-bottom:8px; padding:0; font-weight:500}
+fieldset:disabled input, fieldset:disabled select, fieldset:disabled textarea{opacity:.75}
+.seg{display:inline-flex; background:var(--surface2); border-radius:999px; padding:4px; margin-bottom:8px}
 .seg button{border:0; background:transparent; padding:8px 16px; border-radius:999px; font-weight:600; color:var(--muted)}
-.seg button[aria-pressed="true"]{background:var(--surface); color:var(--ink)}
-.srow{display:flex; align-items:center; gap:12px; margin:0; padding:9px 0; color:var(--ink); font-size:1rem; border-top:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--surface); color:var(--ink); box-shadow:var(--shadow)}
+.srow{display:flex; align-items:center; gap:12px; margin:0; padding:9px 0; color:var(--ink); font-size:1rem; border-top:1px solid var(--line); font-weight:400}
 .srow:first-child{border-top:0}
-.srow span:first-of-type{flex:1}
+.srow .nm{flex:1; min-width:0}
 .srow input[type=checkbox]{width:22px; height:22px; margin:0; accent-color:var(--accent); flex-shrink:0}
 .srow input[inputmode]{width:110px; margin:0; padding:8px 10px; text-align:right}
 .srow .amt{color:var(--muted); font-variant-numeric:tabular-nums}
-.hint{font-size:.9rem; color:var(--muted); margin:8px 0 0}
-.err{color:var(--minus); font-weight:500; min-height:1.2em; margin:12px 0 0}
-.actions{display:flex; gap:10px; justify-content:flex-end; align-items:center; margin-top:16px}
-
-#toast{
-  position:fixed; left:50%; bottom:calc(90px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%);
-  background:var(--ink); color:var(--bg); padding:10px 18px; border-radius:999px; font-weight:500;
-  opacity:0; pointer-events:none; transition:opacity .2s; max-width:calc(100% - 40px); text-align:center;
-}
-#toast.show{opacity:1}
-
-/* Gruppe: Kennzahlen, Status, Verlauf */
-.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
-.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:18px}
-.stat{background:var(--surface); border-radius:14px; padding:10px 10px 11px; min-width:0}
-.stat small{display:block; color:var(--muted); font-size:.8rem}
-.stat b{display:block; font-size:clamp(.95rem, 4vw, 1.1rem); font-weight:700; font-variant-numeric:tabular-nums; margin-top:2px; line-height:1.25; overflow-wrap:anywhere}
-.banner{border-radius:14px; padding:12px 14px; margin-top:16px; font-weight:500; font-size:.95rem}
-.banner.ok{background:color-mix(in srgb, var(--plus) 14%, transparent); color:var(--plus)}
-.banner.warn{background:color-mix(in srgb, var(--minus) 12%, transparent); color:var(--minus)}
-.who{background:var(--surface); border-radius:16px; padding:16px; margin-top:16px}
-.who p{margin:0 0 10px}
-.who .sub{margin:12px 0 0}
-.chips{display:flex; flex-wrap:wrap; gap:8px}
-.chip{border:1.5px solid var(--line); background:var(--bg); border-radius:999px; padding:9px 18px; font-weight:600}
-.linkbtn{background:none; border:0; padding:0; color:var(--link); font-weight:600; text-decoration:underline; text-underline-offset:3px}
-.badge{display:inline-block; font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:999px; background:var(--accent); color:var(--accent-ink); vertical-align:middle; margin-left:8px}
-.dot{display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--minus); margin-left:8px; vertical-align:middle}
-.groups small{display:block; color:var(--muted); font-size:.85rem; font-weight:400; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-.prow{display:grid; grid-template-columns:1fr auto; gap:2px 12px; padding:12px 0; border-top:1px solid var(--line)}
-.prow:first-of-type{border-top:0}
-.pname{font-weight:600}
-.pnums{grid-column:1; color:var(--muted); font-size:.88rem; display:flex; gap:14px; flex-wrap:wrap}
-.pnums b{color:var(--ink); font-weight:600; font-variant-numeric:tabular-nums}
-.pbal{grid-row:1 / span 2; grid-column:2; align-self:center; font-weight:700; font-variant-numeric:tabular-nums}
-.loglist{list-style:none; margin:0; padding:0}
-.loglist li{display:flex; gap:12px; align-items:center; padding:10px 0; border-top:1px solid var(--line); font-size:.95rem}
-.loglist li:first-child{border-top:0}
-.loglist li>div{flex:1; min-width:0}
-.loglist small{display:block; color:var(--muted); font-size:.8rem; margin-top:2px}
-.btnrow{display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; align-items:center}
-.sm{padding:7px 14px; font-size:.9rem}
-.dangerline{color:var(--minus); border-color:color-mix(in srgb, var(--minus) 45%, transparent)}
-.check{display:flex; align-items:center; gap:10px; color:var(--ink); font-size:.95rem; margin:16px 0 0}
+.hint{font-size:.86rem; color:var(--muted); margin:8px 0 0}
+.err{color:var(--minus); font-weight:600; min-height:1.2em; margin:10px 0 0; font-size:.92rem}
+.check{display:flex; align-items:center; gap:10px; color:var(--ink); font-size:.95rem; margin:14px 0 0; font-weight:400}
 .check input{width:22px; height:22px; margin:0; accent-color:var(--accent); flex-shrink:0}
-#formFields{border:0; padding:0; margin:0; min-width:0}
-#formFields:disabled input, #formFields:disabled select{opacity:.75}
-.archive summary{cursor:pointer; font-weight:600; font-size:1.15rem; list-style:none}
-.archive summary::-webkit-details-marker{display:none}
-.archive summary::after{content:" ›"; color:var(--muted)}
-.archive[open] summary{margin-bottom:8px}
-.lock{font-size:.75rem; margin-left:6px}
-.settle .plus{font-weight:600; font-size:.9rem}
+.actions{display:flex; gap:10px; justify-content:flex-end; align-items:center; margin-top:14px}
+.types,.emojis{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px}
+.types button{border:1.5px solid var(--line); background:var(--surface2); border-radius:999px; padding:7px 12px; font-size:.86rem; font-weight:600; color:var(--muted)}
+.types button[aria-pressed="true"],.emojis button[aria-pressed="true"]{border-color:var(--accent); background:var(--accent); color:var(--accent-ink)}
+.emojis button{width:46px; height:46px; border-radius:14px; border:1.5px solid var(--line); background:var(--surface2); font-size:1.4rem}
+.flabel{display:block; font-size:.88rem; color:var(--muted); margin-bottom:4px; font-weight:500}
+.pdocs .upbtn,.upbtn{cursor:pointer}
+.pdocs .upbtn{margin-top:10px}
+.mrow{display:flex; align-items:center; gap:12px; padding:8px 0; border-top:1px solid var(--line)}
+.mrow:first-child{border-top:0}
+.mrow .nm{flex:1; font-weight:600; min-width:0}
+.mrow small{color:var(--muted); font-weight:400; font-size:.8rem}
+.xbtn{border:0; background:var(--surface2); width:34px; height:34px; border-radius:50%; color:var(--muted); font-size:1.1rem}
+.inline{display:flex; gap:10px}
+.inline input{margin:0}
+.inline button{flex-shrink:0}
+.menu{list-style:none; margin:0; padding:0}
+.menu button{display:flex; align-items:center; gap:14px; width:100%; background:none; border:0; padding:14px 4px; border-top:1px solid var(--line); text-align:left; font-weight:600; color:var(--ink); font-size:1rem}
+.menu li:first-child button{border-top:0}
+.menu .mi{font-size:1.25rem; width:28px; text-align:center}
+.menu small{display:block; color:var(--muted); font-weight:400; font-size:.82rem}
+.menu .warnline{color:var(--minus)}
 
-/* Reiseplan & Dokumente */
-.tabs{overflow-x:auto; scrollbar-width:none; gap:22px}
-.tabs::-webkit-scrollbar{display:none}
-.tabs button{flex-shrink:0}
-.addline{display:block; width:100%; text-align:center; margin:14px 0 4px; cursor:pointer}
-.upbtn{cursor:pointer}
-.countdown{display:flex; align-items:baseline; gap:10px; background:var(--surface); border-radius:16px; padding:14px 18px; margin-top:14px}
-.countdown b{font-size:2rem; font-weight:700; letter-spacing:-.02em; color:var(--link)}
-.countdown span{color:var(--muted); font-weight:500}
-.pitem{background:var(--surface); border-radius:14px; margin-bottom:6px; overflow:hidden}
-.pitem.past{opacity:.6}
-.pmain{display:flex; gap:12px; width:100%; text-align:left; background:none; border:0; padding:14px 16px; align-items:flex-start}
-.picon{font-size:1.4rem; line-height:1.2; flex-shrink:0}
-.ptxt{flex:1; min-width:0}
-.ptxt strong{display:block; font-weight:600}
-.ptxt small{display:block; color:var(--muted); font-size:.85rem; white-space:pre-line; margin-top:2px}
-.ptime{display:block; color:var(--link); font-size:.82rem; font-weight:700; font-variant-numeric:tabular-nums}
-.pextra{display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 12px 52px}
-.chipline{display:inline-flex; align-items:center; gap:4px; max-width:100%; background:var(--bg); border:1px solid var(--line); border-radius:999px; padding:5px 12px; font-size:.82rem; color:var(--ink); text-decoration:none; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-.badge.soft{background:var(--line); color:var(--ink)}
-.day .badge{margin-left:8px}
-.note{background:color-mix(in srgb, var(--accent) 16%, transparent); border-radius:14px; padding:12px 14px; margin-top:14px; font-size:.9rem}
-.offl{color:var(--plus); font-size:.78rem; font-weight:700; white-space:nowrap}
-.types{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px}
-.types button{border:1.5px solid var(--line); background:var(--bg); border-radius:999px; padding:7px 12px; font-size:.88rem; font-weight:600; color:var(--muted)}
-.types button[aria-pressed="true"]{border-color:var(--accent); background:var(--accent); color:var(--accent-ink)}
-.opt{font-size:.78rem}
-.pdocs{margin-top:4px}
-.flabel{display:block; font-size:.9rem; color:var(--muted); margin-bottom:4px}
-.pdocs .upbtn{display:inline-block; margin-top:10px}
-#planFields{border:0; padding:0; margin:0; min-width:0}
-#planForm{padding:24px 20px calc(20px + env(safe-area-inset-bottom,0px))}
-dialog.viewer{max-width:900px; width:100%; height:100%; max-height:100%; margin:0 auto; border-radius:0; display:none; flex-direction:column}
+/* Dokumentansicht */
+dialog.viewer{max-width:900px; height:100%; max-height:100%; margin:0 auto; border-radius:0; display:none; flex-direction:column}
 dialog.viewer[open]{display:flex}
-@media (min-width:640px){ dialog.viewer{height:92vh; margin:auto; border-radius:20px} }
+@media (min-width:640px){ dialog.viewer{height:92vh; margin:auto; border-radius:22px} }
 .vhead{display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:space-between; padding:calc(14px + env(safe-area-inset-top,0px)) 16px 12px; border-bottom:1px solid var(--line)}
 .vhead strong{flex:1 1 160px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 .vbtns{display:flex; gap:8px}
 .vbody{flex:1; overflow:auto; padding:12px; background:var(--bg); padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
-.vbody img, .vbody canvas{display:block; width:100%; height:auto; margin:0 auto 10px; border-radius:6px; background:#fff}
+.vbody img,.vbody canvas{display:block; width:100%; height:auto; margin:0 auto 10px; border-radius:6px; background:#fff}
+
+#toast{position:fixed; z-index:50; left:50%; bottom:calc(160px + env(safe-area-inset-bottom,0px)); transform:translateX(-50%);
+  background:var(--ink); color:var(--bg); padding:10px 18px; border-radius:999px; font-weight:600; font-size:.92rem;
+  opacity:0; pointer-events:none; transition:opacity .2s; max-width:calc(100% - 40px); text-align:center}
+#toast.show{opacity:1}
+body.home #toast{bottom:calc(30px + env(safe-area-inset-bottom,0px))}
 
 /* Startbild */
-#splash{
-  position:fixed; inset:0; z-index:100; background:#1E2A38; color:#FFC93C;
-  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;
-  transition:opacity .45s ease, visibility .45s;
-}
+#splash{position:fixed; inset:0; z-index:100; background:#1E2A38; color:#FFC93C; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; transition:opacity .45s ease, visibility .45s}
 #splash.hide{opacity:0; visibility:hidden}
 #splash svg{width:min(52vw,240px); height:auto; animation:pop .6s cubic-bezier(.2,.9,.3,1.3)}
 #splash .splash-name{font-size:2.2rem; font-weight:700; letter-spacing:-0.02em; animation:rise .6s .15s both ease-out}
@@ -282,20 +296,20 @@ dialog.viewer[open]{display:flex}
 <div id="app"><p class="loading">Lade …</p></div>
 
 <dialog id="sheet" aria-labelledby="sheetTitle">
-  <form id="expForm" novalidate>
+  <form id="expForm" class="sheet" novalidate>
     <h2 id="sheetTitle">Neue Ausgabe</h2>
     <fieldset id="formFields">
-      <label>Wofür?<input name="desc" required maxlength="80" placeholder="z. B. Einkauf Supermarkt" autocomplete="off"></label>
+      <label>Wofür?<input name="desc" required maxlength="80" placeholder="z. B. Abendessen" autocomplete="off"></label>
       <div class="two">
         <label>Betrag in €<input name="amount" inputmode="decimal" required placeholder="0,00" autocomplete="off"></label>
         <label>Datum<input type="date" name="date" required></label>
       </div>
       <label>Bezahlt von<select name="paidBy"></select></label>
       <fieldset>
-        <legend>Aufteilen auf</legend>
+        <legend>Für wen?</legend>
         <div class="seg" role="group" aria-label="Art der Aufteilung">
-          <button type="button" data-mode="equal">Gleichmäßig</button>
-          <button type="button" data-mode="exact">Eigene Beträge</button>
+          <button type="button" data-mode="equal">Gleich aufteilen</button>
+          <button type="button" data-mode="exact">Beträge</button>
         </div>
         <div id="splitRows"></div>
         <p id="splitHint" class="hint"></p>
@@ -311,8 +325,9 @@ dialog.viewer[open]{display:flex}
     </div>
   </form>
 </dialog>
+
 <dialog id="planSheet" aria-labelledby="planTitle">
-  <form id="planForm" novalidate>
+  <form id="planForm" class="sheet" novalidate>
     <h2 id="planTitle">Neuer Programmpunkt</h2>
     <fieldset id="planFields">
       <div class="types" id="planTypes" role="group" aria-label="Art">
@@ -348,6 +363,58 @@ dialog.viewer[open]{display:flex}
     </div>
   </form>
 </dialog>
+
+<dialog id="newSheet" aria-labelledby="newTitle">
+  <form id="newForm" class="sheet" novalidate>
+    <h2 id="newTitle">Neue Gruppe</h2>
+    <span class="flabel">Symbol</span>
+    <div class="emojis" id="newEmojis"></div>
+    <label>Name<input name="name" maxlength="60" placeholder="z. B. Urlaub Bari" autocomplete="off"></label>
+    <label>Dein Name<input name="me" maxlength="40" placeholder="z. B. Florian" autocomplete="given-name"></label>
+    <label>Wer ist noch dabei? <span class="opt">(ein Name pro Zeile, später ergänzbar)</span><textarea name="others" rows="3" placeholder="Anna&#10;Ben"></textarea></label>
+    <p id="newErr" class="err" role="alert"></p>
+    <div class="actions">
+      <button type="button" class="ghost" data-close>Abbrechen</button>
+      <button type="submit" class="primary">Erstellen</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="joinSheet" aria-labelledby="joinTitle">
+  <form id="joinForm" class="sheet" novalidate>
+    <h2 id="joinTitle">Gruppe beitreten</h2>
+    <p class="sub" style="margin:0 0 14px">Füge den Link ein, den du von deinen Freunden bekommen hast.</p>
+    <label>Gruppen-Link<input name="link" placeholder="https://…#g=…" autocomplete="off"></label>
+    <button type="button" class="ghost sm" id="pasteLink">Aus Zwischenablage einfügen</button>
+    <p id="joinErr" class="err" role="alert"></p>
+    <div class="actions">
+      <button type="button" class="ghost" data-close>Abbrechen</button>
+      <button type="submit" class="primary">Beitreten</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="groupSheet" aria-labelledby="gsTitle">
+  <form id="groupForm" class="sheet" novalidate>
+    <h2 id="gsTitle">Gruppe bearbeiten</h2>
+    <span class="flabel">Symbol</span>
+    <div class="emojis" id="gsEmojis"></div>
+    <label>Name<input name="name" maxlength="60" autocomplete="off"></label>
+    <span class="flabel">Mitglieder</span>
+    <div id="gsMembers"></div>
+    <div class="inline" style="margin-top:10px"><input id="gsNew" maxlength="40" placeholder="Name hinzufügen" aria-label="Neues Mitglied"><button type="button" class="ghost" id="gsAdd">Hinzufügen</button></div>
+    <p id="gsErr" class="err" role="alert"></p>
+    <div class="actions">
+      <button type="button" class="ghost" data-close>Abbrechen</button>
+      <button type="submit" class="primary">Speichern</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="menuSheet" aria-label="Menü">
+  <div class="sheet"><ul class="menu" id="menuList"></ul></div>
+</dialog>
+
 <dialog id="viewer" class="viewer" aria-labelledby="vName">
   <div class="vhead">
     <strong id="vName"></strong>
@@ -359,6 +426,8 @@ dialog.viewer[open]{display:flex}
   </div>
   <div id="vBody" class="vbody"></div>
 </dialog>
+
+<input type="file" id="docPick" accept="image/*,application/pdf,*/*" multiple hidden>
 <div id="toast" role="status" aria-live="polite"></div>
 <script>
 // Startbild kurz zeigen, dann ausblenden
@@ -368,14 +437,9 @@ setTimeout(function () {
   setTimeout(function () { s.remove(); }, 600);
 }, 1400);
 </script>
-
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
-/* ============================================================
-   HIER DEINE FIREBASE-KONFIGURATION EINFÜGEN
-   (Firebase-Konsole → Projekteinstellungen → Deine Apps → Konfiguration)
-   ============================================================ */
 const firebaseConfig = {
   apiKey: "AIzaSyAQAVLWcCg9u4At21_1rEmxFO2V-TI7PLg",
   authDomain: "fifty-fifty-dca72.firebaseapp.com",
@@ -384,7 +448,9 @@ const firebaseConfig = {
   messagingSenderId: "482629085842",
   appId: "1:482629085842:web:73015a776ffb66ca60d44b"
 };
-/* ============================================================ */
+
+// Download-Link der Android-App (GitHub Release)
+const APP_DOWNLOAD = "https://github.com/HilaminX/Fifty-Fifty/releases/latest/download/Fifty-Fifty.apk";
 
 const configured = !firebaseConfig.apiKey.startsWith("HIER");
 const fbLoaded = typeof firebase !== "undefined";
@@ -394,21 +460,6 @@ if (configured && fbLoaded) {
   db = firebase.firestore();
   db.enablePersistence({ synchronizeTabs: true }).catch(() => {});
 }
-
-const LOGO = `<svg class="logo" viewBox="0 0 200 200" aria-hidden="true">
-        <rect width="200" height="200" fill="#1E2A38"/>
-    <defs><clipPath id="lgl"><rect width="100" height="200"/></clipPath><clipPath id="lgr"><rect x="100" width="100" height="200"/></clipPath></defs>
-    <g clip-path="url(#lgl)">
-      <circle cx="100" cy="100" r="66" fill="#FFC93C"/>
-      <circle cx="100" cy="100" r="55" fill="none" stroke="#D99418" stroke-width="4.5"/>
-      <text x="100" y="103" text-anchor="middle" dominant-baseline="central" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="70" fill="#9A5F05">€</text>
-    </g>
-    <g clip-path="url(#lgr)">
-      <circle cx="100" cy="100" r="66" fill="#9A5F05"/>
-      <circle cx="100" cy="100" r="55" fill="none" stroke="#D99418" stroke-width="4.5"/>
-      <text x="100" y="103" text-anchor="middle" dominant-baseline="central" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="70" fill="#FFC93C">€</text>
-    </g>
-      </svg>`;
 
 /* ---------- Helfer ---------- */
 const $ = s => document.querySelector(s);
@@ -424,6 +475,7 @@ const toCents = v => {
 const centsToInput = c => (c / 100).toFixed(2).replace(".", ",");
 const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
 const fmtDate = d => d ? new Date(d + "T00:00").toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long" }) : "";
+const fmtShortDay = d => d ? new Date(d + "T00:00").toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" }) : "";
 const fmtDay = t => t ? new Date(t).toLocaleDateString("de-DE", { day: "numeric", month: "long", year: "numeric" }) : "";
 const fmtTime = t => t ? new Date(t).toLocaleString("de-DE", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "";
 const randomId = () => { const a = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789"; return Array.from(crypto.getRandomValues(new Uint8Array(20)), b => a[b % a.length]).join(""); };
@@ -438,22 +490,57 @@ function toast(msg) {
 }
 function showError(err) {
   console.error(err);
-  toast(err && err.code === "permission-denied"
-    ? "Zugriff verweigert. Prüfe die Firestore-Regeln."
-    : "Verbindung fehlgeschlagen. Prüfe dein Internet.");
+  toast(err && err.code === "permission-denied" ? "Zugriff verweigert. Prüfe die Firestore-Regeln." : "Verbindung fehlgeschlagen. Prüfe dein Internet.");
 }
 async function shareText(text, title) {
   if (navigator.share) { try { await navigator.share({ title, text }); } catch {} return; }
   try { await navigator.clipboard.writeText(text); toast("In die Zwischenablage kopiert"); }
   catch { prompt("Text zum Kopieren:", text); }
 }
+const COLORS = ["#E07A5F", "#3D8B7D", "#5B7DB1", "#B5679B", "#D4A017", "#6A8D3A", "#8E6CC0", "#C2593B"];
+const colorOf = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.codePointAt(0)) >>> 0; return COLORS[h % COLORS.length]; };
+const initials = n => String(n).trim().split(/\s+/).map(w => [...w][0] || "").join("").slice(0, 2).toUpperCase();
+const av = (n, cls = "") => `<span class="av ${cls}" style="background:${colorOf(n)}" aria-hidden="true">${esc(initials(n))}</span>`;
+const EMOJIS = ["🧳", "✈️", "🏖️", "🏔️", "🏕️", "🚗", "🏠", "🍕", "🎉", "⛷️", "🚢", "⚽"];
+const gemoji = (g, big) => `<span class="gemoji" style="${big ? "" : `background:color-mix(in srgb, ${colorOf(g.name)} 20%, transparent)`}">${esc(g.emoji || "🧳")}</span>`;
+const ICON = {
+  receipt: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>`,
+  scale: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 21h10M5 7h14"/><path d="M5 7l-3 6a3 3 0 0 0 6 0zM19 7l-3 6a3 3 0 0 0 6 0z"/></svg>`,
+  calendar: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>`,
+  file: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>`,
+  plus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>`,
+  back: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>`,
+  invite: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M19 8v6M16 11h6"/></svg>`,
+  more: `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>`
+};
+const LOGO = `<svg class="logo" viewBox="0 0 200 200" aria-hidden="true">
+        <rect width="200" height="200" fill="#1E2A38"/>
+    <defs><clipPath id="lgl"><rect width="100" height="200"/></clipPath><clipPath id="lgr"><rect x="100" width="100" height="200"/></clipPath></defs>
+    <g clip-path="url(#lgl)">
+      <circle cx="100" cy="100" r="66" fill="#FFC93C"/>
+      <circle cx="100" cy="100" r="55" fill="none" stroke="#D99418" stroke-width="4.5"/>
+      <text x="100" y="103" text-anchor="middle" dominant-baseline="central" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="70" fill="#9A5F05">€</text>
+    </g>
+    <g clip-path="url(#lgr)">
+      <circle cx="100" cy="100" r="66" fill="#9A5F05"/>
+      <circle cx="100" cy="100" r="55" fill="none" stroke="#D99418" stroke-width="4.5"/>
+      <text x="100" y="103" text-anchor="middle" dominant-baseline="central" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="70" fill="#FFC93C">€</text>
+    </g>
+      </svg>`;
+// Dialoge schließen: Hintergrund antippen oder "Abbrechen"
+$$("dialog").forEach(d => {
+  d.addEventListener("click", e => { if (e.target === d) d.close(); });
+  d.querySelectorAll("[data-close]").forEach(b => b.onclick = () => d.close());
+});
 
 /* ---------- Zustand ---------- */
 const state = { gid: null, group: null, expenses: [], log: [], plan: [], docs: [], tab: "ausgaben", unsub: [] };
 const groupRef = () => db.collection("groups").doc(state.gid);
 const expRef = () => groupRef().collection("expenses");
 const logRef = () => groupRef().collection("log");
-const meKey = () => "me:" + state.gid;
+const planRef = () => groupRef().collection("plan");
+const docsRef = () => groupRef().collection("docs");
+const meKey = (id = state.gid) => "me:" + id;
 const myName = () => { const m = store.get(meKey(), ""); return state.group && state.group.members.includes(m) ? m : ""; };
 const status = () => (state.group && state.group.status) || "open";
 const isOpen = () => status() === "open";
@@ -462,8 +549,8 @@ const isOwner = e => !!myName() && ownerOf(e) === myName();
 const canEdit = e => isOpen() && !!myName() && (!!e.unlocked || isOwner(e));
 const active = () => state.expenses.filter(e => !e.deleted);
 const totalSpent = () => active().filter(e => e.kind !== "payment").reduce((s, e) => s + e.amount, 0);
+const groupUrl = (id = state.gid) => location.origin + location.pathname + "#g=" + id;
 
-// Jede Änderung: Daten + Gruppen-Info ("zuletzt") + Verlaufseintrag in einem Schritt
 function commit(ops, text, groupExtra = {}) {
   const by = myName();
   const now = Date.now();
@@ -474,142 +561,145 @@ function commit(ops, text, groupExtra = {}) {
   return b.commit().catch(showError);
 }
 
+function inviteText(g = state.group, id = state.gid) {
+  return `Komm in unsere Gruppe „${g.name}“ bei Fifty-Fifty ${g.emoji || "🧳"}\n\n` +
+    `1️⃣ App für Android laden:\n${APP_DOWNLOAD}\n(iPhone: einfach Schritt 2 im Browser öffnen)\n\n` +
+    `2️⃣ Gruppe öffnen:\n${groupUrl(id)}\nIn der App auf „Beitreten“ tippen und diesen Link einfügen.`;
+}
+const appText = () => `Mit Fifty-Fifty teilen wir unsere Ausgaben auf Reisen, kostenlos und ohne Anmeldung 💰\n\nAndroid-App: ${APP_DOWNLOAD}\nIm Browser: ${location.origin + location.pathname}`;
+
 /* ---------- Routing ---------- */
 function route() {
   state.unsub.forEach(u => u()); state.unsub = [];
-  if (!configured) return renderSetup();
-  if (!fbLoaded) {
-    $("#app").innerHTML = `<div class="empty"><p>Keine Verbindung zum Server. Prüfe dein Internet und öffne die App erneut.</p></div>`;
-    return;
-  }
+  $$("dialog[open]").forEach(d => d.close());
+  if (!configured) return $("#app").innerHTML = `<div class="empty"><h1>Fast fertig</h1><p>Trage oben im Skript deine Firebase-Konfiguration ein.</p></div>`;
+  if (!fbLoaded) return $("#app").innerHTML = `<div class="empty"><span class="big">📡</span><p>Keine Verbindung zum Server. Prüfe dein Internet und öffne die App erneut.</p></div>`;
   const m = location.hash.match(/g=([A-Za-z0-9]+)/);
   if (m) openGroup(m[1]); else renderHome();
 }
 window.addEventListener("hashchange", route);
 
-function renderSetup() {
-  $("#app").innerHTML = `<div class="empty"><h1>Fast fertig</h1>
-    <p>Die App ist noch nicht mit Firebase verbunden. Öffne die Datei <strong>index.html</strong> und trage oben im Skript deine Firebase-Konfiguration ein.</p></div>`;
-}
-
 /* ---------- Startseite ---------- */
 function renderHome() {
   document.title = "Fifty-Fifty";
+  document.body.classList.add("home");
   $("#app").innerHTML = `
-    <header class="home-head">
-      ${LOGO}
-      <h1>Fifty-Fifty</h1>
-      <p>Gemeinsame Ausgaben eintragen. Die App rechnet aus, wer wem wie viel schuldet.</p>
-    </header>
+    <header class="brand">${LOGO}<div><h1>Fifty-Fifty</h1><p>Ausgaben teilen, Reisen planen</p></div></header>
+    <div class="homeactions">
+      <button class="primary" id="newBtn" type="button">+ Neue Gruppe</button>
+      <button class="ghost" id="joinBtn" type="button">Beitreten</button>
+    </div>
     <div id="homeGroups"></div>
-    <section class="block">
-      <h2>Gruppe beitreten</h2>
-      <form id="joinGroup" class="inline">
-        <input name="link" placeholder="Gruppen-Link einfügen" aria-label="Gruppen-Link" autocomplete="off">
-        <button class="primary" type="submit">Beitreten</button>
-      </form>
-      <p class="err" id="jgErr" role="alert"></p>
-    </section>
-    <section class="block">
-      <h2>Neue Gruppe</h2>
-      <form id="newGroup">
-        <label>Name der Gruppe<input name="name" required maxlength="60" placeholder="z. B. Urlaub Kroatien"></label>
-        <label>Wer ist dabei?<textarea name="members" rows="4" required placeholder="Ein Name pro Zeile"></textarea></label>
-        <p class="err" id="ngErr" role="alert"></p>
-        <button class="primary" type="submit">Gruppe erstellen</button>
-      </form>
-    </section>`;
+    <p class="footer"><button class="linkbtn" id="shareApp" type="button">Fifty-Fifty weiterempfehlen</button></p>`;
   drawGroups();
   refreshGroups();
-
-  $("#joinGroup").onsubmit = e => {
-    e.preventDefault();
-    const v = e.target.link.value.trim();
-    const m = v.match(/g=([A-Za-z0-9]+)/) || v.match(/^([A-Za-z0-9]{20})$/);
-    if (!m) return $("#jgErr").textContent = "Füge den kompletten Link ein, den du bekommen hast.";
-    location.hash = "g=" + m[1];
-  };
-  $("#newGroup").onsubmit = async e => {
-    e.preventDefault();
-    const f = e.target;
-    const name = f.name.value.trim();
-    const members = [...new Set(f.members.value.split(/[\n,]/).map(s => s.trim()).filter(Boolean))];
-    if (!name) return $("#ngErr").textContent = "Gib der Gruppe einen Namen.";
-    if (members.length < 2) return $("#ngErr").textContent = "Trag mindestens zwei Personen ein.";
-    const btn = f.querySelector("button"); btn.disabled = true;
-    const id = randomId(), now = Date.now();
-    try {
-      const ref = db.collection("groups").doc(id);
-      await ref.set({ name, members, status: "open", createdAt: now, updatedAt: now, lastEvent: "Gruppe erstellt", lastBy: "" });
-      ref.collection("log").add({ at: now, by: "", text: `Gruppe „${name}“ erstellt mit ${members.join(", ")}` }).catch(() => {});
-      location.hash = "g=" + id;
-    } catch (err) { showError(err); btn.disabled = false; }
-  };
+  $("#newBtn").onclick = openNew;
+  $("#joinBtn").onclick = () => { $("#joinForm").reset(); $("#joinErr").textContent = ""; $("#joinSheet").showModal(); };
+  $("#shareApp").onclick = () => shareText(appText(), "Fifty-Fifty");
 }
 
 function drawGroups() {
   const box = $("#homeGroups"); if (!box) return;
   const recent = store.get("recent", []), seen = store.get("seen", {});
   const st = g => g.status || "open";
-  const item = g => {
-    const isNew = g.updatedAt && g.updatedAt > (seen[g.id] || 0) && g.lastBy !== store.get("me:" + g.id, "");
-    return `<li><a href="#g=${g.id}"><span class="gname">${esc(g.name)}${isNew ? `<span class="dot" title="Neu"></span><span class="sr-only">(neu)</span>` : ""}</span>${g.lastEvent ? `<small>${esc(g.lastEvent)}</small>` : ""}</a></li>`;
+  const card = g => {
+    const isNew = g.updatedAt && g.updatedAt > (seen[g.id] || 0) && g.lastBy !== store.get(meKey(g.id), "");
+    return `<a class="gcard" href="#g=${g.id}">${gemoji(g)}
+      <span class="gtxt"><strong>${esc(g.name)}${isNew ? `<span class="dot" title="Neu"></span><span class="sr-only">(neu)</span>` : ""}</strong>
+      <small>${esc(g.lastEvent || `${(g.members || []).length || ""} Personen`)}</small></span><span class="chev" aria-hidden="true">›</span></a>`;
   };
   const open = recent.filter(g => st(g) === "open"), closed = recent.filter(g => st(g) === "closed"), arch = recent.filter(g => st(g) === "archived");
-  box.innerHTML =
-    (open.length ? `<section class="block"><h2>Deine Gruppen</h2><ul class="groups">${open.map(item).join("")}</ul></section>` : "") +
-    (closed.length ? `<section class="block"><h2>Abgerechnet</h2><ul class="groups">${closed.map(item).join("")}</ul></section>` : "") +
-    (arch.length ? `<details class="block archive"><summary>Archiv (${arch.length})</summary><p class="sub">Gelöschte Gruppen. Du kannst sie ansehen und wiederherstellen.</p><ul class="groups">${arch.map(item).join("")}</ul></details>` : "");
+  const fold = (title, list) => `<details class="fold"><summary><div class="section-title">${title} (${list.length})</div></summary>${list.map(card).join("")}</details>`;
+  box.innerHTML = !recent.length
+    ? `<div class="empty"><span class="big">🧳</span><p>Noch keine Gruppen. Leg eine neue an oder tritt mit einem Link bei.</p></div>`
+    : (open.length ? `<div class="section-title">Deine Gruppen</div>${open.map(card).join("")}` : "") +
+      (closed.length ? fold("Abgerechnet", closed) : "") +
+      (arch.length ? fold("Archiv · gelöscht", arch) : "");
 }
 
 async function refreshGroups() {
   const recent = store.get("recent", []);
   if (!recent.length) return;
-  const fresh = await Promise.all(recent.map(g =>
-    db.collection("groups").doc(g.id).get()
-      .then(s => s.exists ? { ...g, ...pick(s.data()) } : null)
-      .catch(() => g)));
+  const fresh = await Promise.all(recent.map(g => db.collection("groups").doc(g.id).get()
+    .then(s => s.exists ? { ...g, ...pick(s.data()) } : null).catch(() => g)));
   store.set("recent", fresh.filter(Boolean));
   if (!location.hash.match(/g=/)) drawGroups();
 }
-const pick = d => ({ name: d.name, status: d.status || "open", updatedAt: d.updatedAt || 0, lastEvent: d.lastEvent || "", lastBy: d.lastBy || "" });
-
+const pick = d => ({ name: d.name, emoji: d.emoji || "", members: d.members || [], status: d.status || "open", updatedAt: d.updatedAt || 0, lastEvent: d.lastEvent || "", lastBy: d.lastBy || "" });
 function remember(id, data) {
   const list = store.get("recent", []).filter(g => g.id !== id);
   list.unshift({ id, ...pick(data) });
   store.set("recent", list.slice(0, 40));
 }
 
+/* Neue Gruppe */
+let newEmoji = "🧳";
+function drawEmojis(box, sel, onPick) {
+  box.innerHTML = EMOJIS.map(e => `<button type="button" data-emoji="${e}" aria-pressed="${e === sel}" aria-label="Symbol ${e}">${e}</button>`).join("");
+  box.querySelectorAll("button").forEach(b => b.onclick = () => { onPick(b.dataset.emoji); box.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); });
+}
+function openNew() {
+  $("#newForm").reset(); $("#newErr").textContent = ""; newEmoji = "🧳";
+  drawEmojis($("#newEmojis"), newEmoji, e => newEmoji = e);
+  $("#newSheet").showModal();
+}
+$("#newForm").onsubmit = async e => {
+  e.preventDefault();
+  const f = e.target, err = m => $("#newErr").textContent = m;
+  const name = f.name.value.trim(), me = f.me.value.trim();
+  const others = f.others.value.split(/[\n,]/).map(s => s.trim()).filter(Boolean);
+  const members = [...new Set([me, ...others].filter(Boolean))];
+  if (!name) return err("Gib der Gruppe einen Namen.");
+  if (!me) return err("Trag deinen eigenen Namen ein.");
+  const btn = f.querySelector("[type=submit]"); btn.disabled = true;
+  const id = randomId(), now = Date.now();
+  try {
+    const ref = db.collection("groups").doc(id);
+    await ref.set({ name, emoji: newEmoji, members, status: "open", createdAt: now, updatedAt: now, lastEvent: `${me} hat die Gruppe erstellt`, lastBy: me });
+    ref.collection("log").add({ at: now, by: me, text: `hat die Gruppe „${name}“ erstellt` }).catch(() => {});
+    store.set(meKey(id), me);
+    $("#newSheet").close();
+    location.hash = "g=" + id;
+    setTimeout(() => toast("Gruppe erstellt. Lade jetzt deine Freunde ein!"), 400);
+  } catch (x) { showError(x); }
+  btn.disabled = false;
+};
+
+/* Beitreten */
+$("#pasteLink").onclick = async () => {
+  try { $("#joinForm").link.value = await navigator.clipboard.readText(); }
+  catch { toast("Einfügen nicht möglich. Bitte lange ins Feld tippen und „Einfügen“ wählen."); }
+};
+$("#joinForm").onsubmit = e => {
+  e.preventDefault();
+  const v = e.target.link.value.trim();
+  const m = v.match(/g=([A-Za-z0-9]+)/) || v.match(/^([A-Za-z0-9]{20})$/);
+  if (!m) return $("#joinErr").textContent = "Das sieht nicht nach einem Gruppen-Link aus. Füge den kompletten Link ein.";
+  $("#joinSheet").close();
+  location.hash = "g=" + m[1];
+};
+
 /* ---------- Gruppe ---------- */
 function openGroup(id) {
+  document.body.classList.remove("home");
+  if (state.gid !== id) state.tab = "ausgaben";
   state.gid = id; state.group = null; state.expenses = []; state.log = []; state.plan = []; state.docs = [];
   $("#app").innerHTML = `<p class="loading">Lade Gruppe …</p>`;
+  const again = () => { if (state.group) renderGroup(); };
   state.unsub.push(groupRef().onSnapshot(snap => {
     if (!snap.exists) {
-      $("#app").innerHTML = `<div class="empty"><p>Diese Gruppe wurde nicht gefunden. Prüfe, ob der Link vollständig ist.</p><a class="primary" href="#">Zur Startseite</a></div>`;
+      $("#app").innerHTML = `<div class="empty"><span class="big">🔍</span><p>Diese Gruppe wurde nicht gefunden. Prüfe, ob der Link vollständig ist.</p><a class="primary" href="#">Zur Startseite</a></div>`;
       return;
     }
     state.group = snap.data();
     remember(id, state.group);
     renderGroup();
+    if ($("#groupSheet").open) drawMembers();
   }, showError));
-  state.unsub.push(expRef().orderBy("createdAt", "desc").onSnapshot(qs => {
-    state.expenses = qs.docs.map(d => ({ id: d.id, ...d.data() }));
-    if (state.group) renderGroup();
-  }, showError));
-  state.unsub.push(logRef().orderBy("at", "desc").limit(200).onSnapshot(qs => {
-    state.log = qs.docs.map(d => d.data());
-    if (state.group && state.tab === "verlauf") renderGroup();
-  }, () => {}));
-  const travelTabs = ["plan", "docs", "verlauf"];
-  state.unsub.push(planRef().onSnapshot(qs => {
-    state.plan = qs.docs.map(d => ({ id: d.id, ...d.data() }));
-    if (state.group && travelTabs.includes(state.tab)) renderGroup();
-  }, () => {}));
-  state.unsub.push(docsRef().onSnapshot(qs => {
-    state.docs = qs.docs.map(d => ({ id: d.id, ...d.data() }));
-    if (state.group && travelTabs.includes(state.tab)) renderGroup();
-  }, () => {}));
+  state.unsub.push(expRef().orderBy("createdAt", "desc").onSnapshot(qs => { state.expenses = qs.docs.map(d => ({ id: d.id, ...d.data() })); again(); if ($("#groupSheet").open) drawMembers(); }, showError));
+  state.unsub.push(logRef().orderBy("at", "desc").limit(200).onSnapshot(qs => { state.log = qs.docs.map(d => d.data()); if (state.tab === "verlauf") again(); }, () => {}));
+  state.unsub.push(planRef().onSnapshot(qs => { state.plan = qs.docs.map(d => ({ id: d.id, ...d.data() })); again(); }, () => {}));
+  state.unsub.push(docsRef().onSnapshot(qs => { state.docs = qs.docs.map(d => ({ id: d.id, ...d.data() })); again(); }, () => {}));
 }
 
 function stats() {
@@ -623,8 +713,6 @@ function stats() {
   for (const m in s) s[m].bal = s[m].paid - s[m].share + s[m].sent - s[m].recv;
   return s;
 }
-
-// Schulden vereinfachen: möglichst wenige Überweisungen
 function settle(st) {
   const cred = [], debt = [];
   for (const [m, x] of Object.entries(st)) { if (x.bal > 0) cred.push({ m, v: x.bal }); else if (x.bal < 0) debt.push({ m, v: -x.bal }); }
@@ -640,51 +728,48 @@ function settle(st) {
   return out;
 }
 
+const TABS = [["ausgaben", "Ausgaben", "receipt"], ["abrechnung", "Abrechnung", "scale"], ["plan", "Reiseplan", "calendar"], ["docs", "Dokumente", "file"]];
+
 function renderGroup() {
   const g = state.group, me = myName(), st = stats(), total = totalSpent(), n = g.members.length;
   document.title = g.name + " – Fifty-Fifty";
   const seen = store.get("seen", {}); seen[state.gid] = Date.now(); store.set("seen", seen);
-
-  const banner = status() === "closed"
-    ? `<div class="banner ok">✓ Abgerechnet am ${fmtDay(g.closedAt)}. Die Gruppe ist schreibgeschützt.</div>`
-    : status() === "archived"
-      ? `<div class="banner warn">Diese Gruppe wurde am ${fmtDay(g.archivedAt)} gelöscht und liegt im Archiv. Du kannst sie dir ansehen oder wiederherstellen.</div>`
-      : "";
-
+  const banner = status() === "closed" ? `<div class="banner ok">✓ Abgerechnet am ${fmtDay(g.closedAt)}. Die Gruppe ist schreibgeschützt.</div>`
+    : status() === "archived" ? `<div class="banner warn">Gelöscht am ${fmtDay(g.archivedAt)} – liegt im Archiv. Über ⋯ kannst du sie wiederherstellen.</div>` : "";
+  const cd = countdownInfo();
   let tiles;
   if (me) {
     const b = st[me].bal;
-    tiles = tile("Gesamt", fmt(total)) + tile("Dein Anteil", fmt(st[me].share)) +
-      tile(b > 0 ? "Du bekommst" : b < 0 ? "Du schuldest" : "Offen", b ? fmt(Math.abs(b)) : "✓ 0,00 €", b > 0 ? "plus" : b < 0 ? "minus" : "");
+    tiles = `<div><small>Gesamt</small><b>${fmt(total)}</b></div><div><small>Dein Anteil</small><b>${fmt(st[me].share)}</b></div>
+      <div><small>${b > 0 ? "Du bekommst" : b < 0 ? "Du schuldest" : "Offen"}</small><b class="${b > 0 ? "hp" : b < 0 ? "hm" : ""}">${b ? fmt(Math.abs(b)) : "✓"}</b></div>`;
   } else {
-    tiles = tile("Gesamt", fmt(total)) + tile("Ø pro Person", fmt(Math.round(total / n))) + tile("Personen", String(n));
+    tiles = `<div><small>Gesamt</small><b>${fmt(total)}</b></div><div><small>Ø pro Person</small><b>${fmt(Math.round(total / n))}</b></div><div><small>Personen</small><b>${n}</b></div>`;
   }
-
-  const who = me
-    ? `<p class="sub">Du bist <strong>${esc(me)}</strong> · <button class="linkbtn" id="changeMe" type="button">ändern</button> · <button class="linkbtn" id="share" type="button">Link teilen</button></p>`
-    : `<div class="who"><p><strong>Wer bist du?</strong> Damit siehst du deinen Anteil, und nur du kannst deine eigenen Einträge ändern.</p>
-        <div class="chips">${g.members.map(m => `<button class="chip" type="button" data-me="${esc(m)}">${esc(m)}</button>`).join("")}</div>
-        <p class="sub"><button class="linkbtn" id="share" type="button">Link teilen</button></p></div>`;
-
-  const tabs = [["ausgaben", "Ausgaben"], ["uebersicht", "Übersicht"], ["plan", "Reiseplan"], ["docs", "Dokumente"], ["verlauf", "Verlauf"]];
+  const who = me ? "" : `<div class="who"><p><strong>Wer bist du?</strong> Dann siehst du deinen Anteil und nur du kannst deine Einträge ändern.</p>
+      <div class="chips">${g.members.map(m => `<button class="chip" type="button" data-me="${esc(m)}">${av(m, "s")}${esc(m)}</button>`).join("")}</div></div>`;
+  const tab = state.tab;
+  const content = { ausgaben: renderExpenses, abrechnung: () => renderOverview(st), plan: renderPlan, docs: renderDocs, verlauf: renderLog }[tab] || renderExpenses;
+  const showFab = isOpen() && tab !== "verlauf";
   $("#app").innerHTML = `
-    <header>
-      <a href="#" class="back">‹ Alle Gruppen</a>
-      <h1>${esc(g.name)}</h1>
-      ${banner}
-      <div class="stats">${tiles}</div>
+    <div class="topbar">
+      <a class="iconbtn" href="#" aria-label="Alle Gruppen">${ICON.back}</a>
+      <span class="grow"></span>
+      ${status() !== "archived" ? `<button class="iconbtn" id="invite" type="button">${ICON.invite}<span>Einladen</span></button>` : ""}
+      <button class="iconbtn" id="menuBtn" type="button" aria-label="Weitere Aktionen">${ICON.more}</button>
+    </div>
+    <section class="hero">
+      <div class="htop">${gemoji(g, true)}<div style="min-width:0"><h1>${esc(g.name)}</h1>
+        <div class="hsub"><span class="avs">${g.members.slice(0, 6).map(m => av(m, "s")).join("")}</span>${n} Personen${me ? ` · du bist ${esc(me)}` : ""}${cd ? ` <span class="hchip">${cd}</span>` : ""}</div></div></div>
+      <div class="hstats">${tiles}</div>
       ${who}
-    </header>
-    <nav class="tabs" role="tablist">
-      ${tabs.map(([k, l]) => `<button role="tab" data-tab="${k}" aria-selected="${state.tab === k}">${l}</button>`).join("")}
-    </nav>
-    <main>${({ ausgaben: renderExpenses, uebersicht: () => renderOverview(st), plan: renderPlan, docs: renderDocs, verlauf: renderLog }[state.tab] || renderExpenses)()}</main>
-    ${isOpen() && ["ausgaben", "uebersicht"].includes(state.tab) ? `<button class="fab primary" id="add" type="button">Ausgabe hinzufügen</button>` : ""}`;
+    </section>
+    ${banner}
+    ${tab === "verlauf" ? `<div class="section-title">Verlauf <button class="linkbtn" id="backTab" type="button">Schließen</button></div>` : ""}
+    <main>${content()}</main>
+    ${showFab ? `<button class="fab" id="fab" type="button" aria-label="${tab === "plan" ? "Programmpunkt hinzufügen" : tab === "docs" ? "Dokument hinzufügen" : "Ausgabe hinzufügen"}">${ICON.plus}</button>` : ""}
+    <nav class="nav" aria-label="Bereiche"><div class="nav-in">${TABS.map(([k, l, i]) => `<button type="button" data-tab="${k}" ${tab === k ? 'aria-current="page"' : ""}><span class="ni">${ICON[i]}</span>${l}</button>`).join("")}</div></nav>`;
   bindGroup(st);
-  bindTravel();
-  const at = $(".tabs [aria-selected=true]"); if (at) at.scrollIntoView({ block: "nearest", inline: "center" });
 }
-const tile = (label, value, cls = "") => `<div class="stat"><small>${label}</small><b class="${cls}">${value}</b></div>`;
 
 function needMe() {
   if (myName()) return false;
@@ -695,94 +780,134 @@ function needMe() {
 
 function bindGroup(st) {
   const g = state.group;
-  $$("[data-me]").forEach(b => b.onclick = () => { store.set(meKey(), b.dataset.me); renderGroup(); });
-  const cm = $("#changeMe");
-  if (cm) cm.onclick = () => {
-    if (confirm("Möchtest du wechseln, wer du bist? Danach kannst du nur noch die Einträge der neu gewählten Person ändern.")) { store.set(meKey(), ""); renderGroup(); }
+  $$("[data-me]").forEach(b => b.onclick = () => { store.set(meKey(), b.dataset.me); renderGroup(); toast(`Hallo ${b.dataset.me}!`); });
+  $$(".nav [data-tab]").forEach(t => t.onclick = () => { state.tab = t.dataset.tab; renderGroup(); window.scrollTo({ top: 0 }); });
+  const bt = $("#backTab"); if (bt) bt.onclick = () => { state.tab = "ausgaben"; renderGroup(); };
+  const inv = $("#invite"); if (inv) inv.onclick = () => shareText(inviteText(), g.name);
+  $("#menuBtn").onclick = openMenu;
+  const fab = $("#fab");
+  if (fab) fab.onclick = () => {
+    if (needMe()) return;
+    if (state.tab === "plan") openPlan();
+    else if (state.tab === "docs") $("#docPick").click();
+    else openSheet();
   };
-  $("#share").onclick = () => shareText(`Trag deine Ausgaben für „${g.name}“ hier ein:\n${location.href}`, g.name);
-  const add = $("#add"); if (add) add.onclick = () => { if (!needMe()) openSheet(); };
-  $$(".tabs button").forEach(t => t.onclick = () => { state.tab = t.dataset.tab; renderGroup(); });
 
-  $$(".item").forEach(el => el.onclick = () => {
+  $$(".item[data-id]").forEach(el => el.onclick = () => {
     const e = state.expenses.find(x => x.id === el.dataset.id);
     if (!e) return;
     if (e.kind !== "payment") return openSheet(e);
     if (!canEdit(e)) return toast(isOpen() ? `Nur ${ownerOf(e)} kann diese Rückzahlung löschen.` : "Die Gruppe ist abgeschlossen.");
     if (confirm(`Rückzahlung von ${e.paidBy} an ${e.shares[0].m} (${fmt(e.amount)}) löschen?`))
-      commit(b => b.update(expRef().doc(e.id), { deleted: true, deletedAt: Date.now(), deletedBy: myName() }),
-        `hat die Rückzahlung ${e.paidBy} → ${e.shares[0].m} (${fmt(e.amount)}) gelöscht`);
+      commit(b => b.update(expRef().doc(e.id), { deleted: true, deletedAt: Date.now(), deletedBy: myName() }), `hat die Rückzahlung ${e.paidBy} → ${e.shares[0].m} (${fmt(e.amount)}) gelöscht`);
   });
-
   $$("[data-settle]").forEach(btn => btn.onclick = () => {
     if (needMe()) return;
     const s = settle(st)[+btn.dataset.settle];
     if (!s || !confirm(`Hat ${s.from} ${fmt(s.amount)} an ${s.to} überwiesen?`)) return;
     const ref = expRef().doc();
-    commit(b => b.set(ref, {
-      kind: "payment", desc: "Rückzahlung", amount: s.amount, date: today(), paidBy: s.from,
-      shares: [{ m: s.to, c: s.amount }], createdAt: Date.now(), createdBy: myName(), unlocked: false, deleted: false
-    }), `hat ${s.from} → ${s.to} (${fmt(s.amount)}) als bezahlt markiert`).then(() => toast("Als bezahlt markiert"));
+    commit(b => b.set(ref, { kind: "payment", desc: "Rückzahlung", amount: s.amount, date: today(), paidBy: s.from, shares: [{ m: s.to, c: s.amount }], createdAt: Date.now(), createdBy: myName(), unlocked: false, deleted: false }),
+      `hat ${s.from} → ${s.to} (${fmt(s.amount)}) als bezahlt markiert`).then(() => toast("Als bezahlt markiert"));
   });
-
-  $$("[data-restore]").forEach(btn => btn.onclick = () => {
-    const e = state.expenses.find(x => x.id === btn.dataset.restore);
-    if (!e) return;
-    commit(b => b.update(expRef().doc(e.id), { deleted: false }),
-      `hat ${e.kind === "payment" ? `die Rückzahlung ${e.paidBy} → ${e.shares[0].m}` : `„${e.desc}“`} (${fmt(e.amount)}) wiederhergestellt`)
-      .then(() => toast("Wiederhergestellt"));
+  const restore = (sel, find, ref, label) => $$(sel).forEach(btn => btn.onclick = () => {
+    const x = find(btn); if (!x) return;
+    commit(b => b.update(ref(x), { deleted: false }), `hat ${label(x)} wiederhergestellt`).then(() => toast("Wiederhergestellt"));
   });
-
-  $$("[data-restore-plan]").forEach(btn => btn.onclick = () => {
-    const p = state.plan.find(x => x.id === btn.dataset.restorePlan); if (!p) return;
-    commit(b => b.update(planRef().doc(p.id), { deleted: false }), `hat „${p.title}“ im Reiseplan wiederhergestellt`).then(() => toast("Wiederhergestellt"));
-  });
-  $$("[data-restore-doc]").forEach(btn => btn.onclick = () => {
-    const d = state.docs.find(x => x.id === btn.dataset.restoreDoc); if (!d) return;
-    commit(b => b.update(docsRef().doc(d.id), { deleted: false }), `hat das Dokument „${d.name}“ wiederhergestellt`).then(() => toast("Wiederhergestellt"));
-  });
-
-  const am = $("#addMember");
-  if (am) am.onsubmit = e => {
-    e.preventDefault();
-    if (needMe()) return;
-    const name = e.target.name.value.trim();
-    if (!name) return;
-    if (g.members.includes(name)) return toast(`${name} ist schon in der Gruppe`);
-    commit(() => {}, `hat ${name} zur Gruppe hinzugefügt`, { members: firebase.firestore.FieldValue.arrayUnion(name) })
-      .then(() => toast(`${name} hinzugefügt`));
-  };
+  restore("[data-restore]", b => state.expenses.find(x => x.id === b.dataset.restore), x => expRef().doc(x.id), e => e.kind === "payment" ? `die Rückzahlung ${e.paidBy} → ${e.shares[0].m}` : `„${e.desc}“`);
+  restore("[data-restore-plan]", b => state.plan.find(x => x.id === b.dataset.restorePlan), x => planRef().doc(x.id), p => `„${p.title}“ im Reiseplan`);
+  restore("[data-restore-doc]", b => state.docs.find(x => x.id === b.dataset.restoreDoc), x => docsRef().doc(x.id), d => `das Dokument „${d.name}“`);
 
   const act = (id, fn) => { const el = $(id); if (el) el.onclick = fn; };
   act("#summary", () => shareText(summaryText(st), g.name));
-  act("#closeGroup", () => {
-    if (needMe()) return;
-    if (!confirm("Abrechnung abschließen? Danach kann niemand mehr Ausgaben eintragen oder ändern. Du kannst die Gruppe später wieder öffnen.")) return;
-    commit(() => {}, "hat die Abrechnung abgeschlossen", { status: "closed", closedAt: Date.now() })
-      .then(() => toast("Abrechnung abgeschlossen. Teile jetzt die Zusammenfassung mit allen."));
-  });
-  act("#reopenGroup", () => {
-    if (needMe()) return;
-    if (confirm("Gruppe wieder öffnen? Dann können wieder Ausgaben eingetragen werden."))
-      commit(() => {}, "hat die Gruppe wieder geöffnet", { status: "open" });
-  });
-  act("#archiveGroup", () => {
-    if (needMe()) return;
-    if (confirm(`Gruppe „${g.name}“ löschen? Sie verschwindet aus der Liste und wandert ins Archiv. Dort kann sie jeder aus der Gruppe ansehen und wiederherstellen.`))
-      commit(() => {}, "hat die Gruppe gelöscht (Archiv)", { status: "archived", archivedAt: Date.now() })
-        .then(() => { toast("Gruppe ins Archiv verschoben"); location.hash = ""; });
-  });
-  act("#restoreGroup", () => {
-    if (needMe()) return;
-    commit(() => {}, "hat die Gruppe aus dem Archiv wiederhergestellt", { status: "closed" })
-      .then(() => toast("Gruppe wiederhergestellt"));
-  });
+  act("#closeGroup", closeGroup);
+  bindTravel();
 }
 
+/* Gruppen-Aktionen */
+function closeGroup() {
+  if (needMe()) return;
+  if (!confirm("Abrechnung abschließen? Danach kann niemand mehr Ausgaben eintragen oder ändern. Du kannst die Gruppe später wieder öffnen.")) return;
+  commit(() => {}, "hat die Abrechnung abgeschlossen", { status: "closed", closedAt: Date.now() }).then(() => toast("Abgeschlossen. Teile jetzt die Zusammenfassung!"));
+}
+function openMenu() {
+  const g = state.group, me = myName(), st = stats();
+  const items = [];
+  if (status() !== "archived") items.push(["✏️", "Gruppe bearbeiten", "Name, Symbol und Mitglieder", openGroupSheet]);
+  if (status() !== "archived") items.push(["🔗", "Freunde einladen", "Mit App-Download und Gruppen-Link", () => shareText(inviteText(), g.name)]);
+  items.push(["📤", isOpen() ? "Zwischenstand teilen" : "Zusammenfassung teilen", "Als Text, z. B. für WhatsApp", () => shareText(summaryText(st), g.name)]);
+  items.push(["🕘", "Verlauf", "Alle Änderungen und gelöschte Einträge", () => { state.tab = "verlauf"; renderGroup(); window.scrollTo({ top: 0 }); }]);
+  if (me) items.push(["👤", `Du bist ${me}`, "Andere Person wählen", () => {
+    if (confirm("Möchtest du wechseln, wer du bist? Danach kannst du nur noch die Einträge der neu gewählten Person ändern.")) { store.set(meKey(), ""); renderGroup(); }
+  }]);
+  if (status() === "closed") {
+    items.push(["🔓", "Wieder öffnen", "Ausgaben wieder bearbeitbar machen", () => { if (!needMe() && confirm("Gruppe wieder öffnen?")) commit(() => {}, "hat die Gruppe wieder geöffnet", { status: "open" }); }]);
+    items.push(["🗑️", "Gruppe löschen", "Wandert ins Archiv und kann wiederhergestellt werden", () => {
+      if (needMe()) return;
+      if (confirm(`„${g.name}“ löschen? Sie wandert ins Archiv auf der Startseite.`))
+        commit(() => {}, "hat die Gruppe gelöscht (Archiv)", { status: "archived", archivedAt: Date.now() }).then(() => { toast("Ins Archiv verschoben"); location.hash = ""; });
+    }, "warnline"]);
+  }
+  if (status() === "archived") items.push(["♻️", "Wiederherstellen", "Zurück zu den abgerechneten Gruppen", () => { if (!needMe()) commit(() => {}, "hat die Gruppe wiederhergestellt", { status: "closed" }).then(() => toast("Wiederhergestellt")); }]);
+  if (isOpen()) items.push(["✅", "Abrechnung abschließen", settle(st).length ? "Erst wenn alle Rückzahlungen erledigt sind" : "Alles ist ausgeglichen", () => settle(st).length ? (state.tab = "abrechnung", renderGroup(), toast("Erst alle Rückzahlungen als erledigt markieren.")) : closeGroup()]);
+  $("#menuList").innerHTML = items.map(([i, t, s, , c], k) => `<li><button type="button" data-k="${k}" class="${c || ""}"><span class="mi">${i}</span><span>${esc(t)}<small>${esc(s)}</small></span></button></li>`).join("");
+  $$("#menuList button").forEach(b => b.onclick = () => { $("#menuSheet").close(); items[+b.dataset.k][3](); });
+  $("#menuSheet").showModal();
+}
+
+/* Gruppe bearbeiten */
+let gsEmoji = "";
+function involved(m) { return state.expenses.some(e => e.paidBy === m || ownerOf(e) === m || (e.shares || []).some(s => s.m === m)); }
+function drawMembers() {
+  const g = state.group;
+  $("#gsMembers").innerHTML = g.members.map(m => `<div class="mrow">${av(m, "s")}<span class="nm">${esc(m)}${involved(m) ? `<small> · hat Einträge</small>` : ""}</span>
+    ${!involved(m) && g.members.length > 1 && isOpen() ? `<button type="button" class="xbtn" data-rm="${esc(m)}" aria-label="${esc(m)} entfernen">×</button>` : ""}</div>`).join("");
+  $$("#gsMembers [data-rm]").forEach(b => b.onclick = () => {
+    const m = b.dataset.rm;
+    if (!confirm(`${m} aus der Gruppe entfernen?`)) return;
+    commit(() => {}, `hat ${m} aus der Gruppe entfernt`, { members: firebase.firestore.FieldValue.arrayRemove(m) });
+  });
+}
+function openGroupSheet() {
+  if (needMe()) return;
+  const g = state.group;
+  $("#groupForm").name.value = g.name; $("#gsErr").textContent = ""; $("#gsNew").value = "";
+  gsEmoji = g.emoji || "🧳";
+  drawEmojis($("#gsEmojis"), gsEmoji, e => gsEmoji = e);
+  drawMembers();
+  $("#gsNew").disabled = $("#gsAdd").disabled = !isOpen();
+  $("#groupSheet").showModal();
+}
+$("#gsAdd").onclick = () => {
+  const name = $("#gsNew").value.trim();
+  if (!name) return;
+  if (state.group.members.includes(name)) return $("#gsErr").textContent = `${name} ist schon in der Gruppe.`;
+  $("#gsErr").textContent = ""; $("#gsNew").value = "";
+  commit(() => {}, `hat ${name} zur Gruppe hinzugefügt`, { members: firebase.firestore.FieldValue.arrayUnion(name) }).then(() => toast(`${name} hinzugefügt`));
+};
+$("#gsNew").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); $("#gsAdd").click(); } });
+$("#groupForm").onsubmit = e => {
+  e.preventDefault();
+  const g = state.group, name = e.target.name.value.trim();
+  if (!name) return $("#gsErr").textContent = "Der Name darf nicht leer sein.";
+  const ch = {};
+  if (name !== g.name) ch.name = name;
+  if (gsEmoji !== (g.emoji || "🧳")) ch.emoji = gsEmoji;
+  $("#groupSheet").close();
+  if (!Object.keys(ch).length) return;
+  commit(() => {}, ch.name ? `hat die Gruppe in „${name}“ umbenannt` : `hat das Symbol auf ${gsEmoji} geändert`, ch).then(() => toast("Gespeichert"));
+};
+
+/* ---------- Ansichten ---------- */
+function myEffect(e) {
+  const me = myName(); if (!me) return "";
+  const mine = (e.shares.find(s => s.m === me) || {}).c || 0;
+  if (e.kind === "payment") return "";
+  if (e.paidBy === me) { const lent = e.amount - mine; return lent > 0 ? `<span class="mine plus" title="Du bekommst ${fmt(lent)} zurück">du +${fmt(lent)}</span>` : `<span class="mine" style="color:var(--muted)">nur du</span>`; }
+  return mine ? `<span class="mine minus" title="Dein Anteil: ${fmt(mine)}">du −${fmt(mine)}</span>` : `<span class="mine" style="color:var(--muted)">ohne dich</span>`;
+}
 function renderExpenses() {
   const list = active();
-  if (!list.length)
-    return `<div class="empty"><p>${isOpen() ? "Noch keine Ausgaben. Trag die erste ein, zum Beispiel den Einkauf oder die Tankfüllung." : "Keine Ausgaben."}</p></div>`;
+  if (!list.length) return `<div class="empty"><span class="big">🧾</span><p>${isOpen() ? "Noch keine Ausgaben. Tippe unten rechts auf <b>+</b>, um die erste einzutragen." : "Keine Ausgaben."}</p></div>`;
   const all = state.group.members.length;
   const sorted = [...list].sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.createdAt - a.createdAt);
   let html = `<ul class="list">`, last = null;
@@ -790,196 +915,134 @@ function renderExpenses() {
     if (e.date !== last) { html += `<li class="day">${fmtDate(e.date)}</li>`; last = e.date; }
     const lock = isOpen() && myName() && !canEdit(e) ? `<span class="lock" title="Nur ${esc(ownerOf(e))} kann das ändern">🔒</span>` : "";
     if (e.kind === "payment") {
-      html += `<li><button class="item pay" data-id="${e.id}"><span class="txt"><strong>${esc(e.paidBy)} hat ${esc(e.shares[0].m)} Geld zurückgezahlt${lock}</strong></span><span class="amt">${fmt(e.amount)}</span></button></li>`;
+      html += `<li><button class="item pay" data-id="${e.id}">${av(e.paidBy)}<span class="txt"><strong>${esc(e.paidBy)} → ${esc(e.shares[0].m)}${lock}</strong><small>Rückzahlung</small></span><span class="right"><span class="amt">${fmt(e.amount)}</span></span></button></li>`;
     } else {
       const who = e.shares.length === all ? "alle" : e.shares.map(s => s.m).join(", ");
-      html += `<li><button class="item" data-id="${e.id}"><span class="txt"><strong>${esc(e.desc)}${lock}</strong><small>${esc(e.paidBy)} hat bezahlt, für ${esc(who)}</small></span><span class="amt">${fmt(e.amount)}</span></button></li>`;
+      html += `<li><button class="item" data-id="${e.id}">${av(e.paidBy)}<span class="txt"><strong>${esc(e.desc)}${lock}</strong><small>${esc(e.paidBy)} · für ${esc(who)}</small></span><span class="right"><span class="amt">${fmt(e.amount)}</span>${myEffect(e)}</span></button></li>`;
     }
   }
   return html + `</ul>`;
 }
 
 function renderOverview(st) {
-  const g = state.group, me = myName(), total = totalSpent(), n = g.members.length;
-  const plan = settle(st);
+  const g = state.group, me = myName(), total = totalSpent(), n = g.members.length, plan = settle(st);
   const rows = g.members.map(m => {
     const x = st[m];
-    const cls = x.bal > 0 ? "plus" : x.bal < 0 ? "minus" : "";
-    const bal = x.bal > 0 ? `+${fmt(x.bal)}` : x.bal < 0 ? `−${fmt(-x.bal)}` : "✓";
-    return `<div class="prow">
-      <div class="pname">${esc(m)}${m === me ? `<span class="badge">du</span>` : ""}</div>
-      <div class="pnums"><span>Anteil <b>${fmt(x.share)}</b></span><span>bezahlt <b>${fmt(x.paid)}</b></span></div>
-      <div class="pbal ${cls}" title="${x.bal > 0 ? "bekommt noch" : x.bal < 0 ? "schuldet noch" : "ausgeglichen"}">${bal}</div>
-    </div>`;
+    const pill = x.bal > 0 ? `<span class="pill plus">+${fmt(x.bal)}</span>` : x.bal < 0 ? `<span class="pill minus">−${fmt(-x.bal)}</span>` : `<span class="pill zero">✓ quitt</span>`;
+    return `<div class="prow">${av(m)}<div class="txt"><div class="pname">${esc(m)}${m === me ? `<span class="badge">du</span>` : ""}</div>
+      <div class="pnums"><span>Anteil <b>${fmt(x.share)}</b></span><span>bezahlt <b>${fmt(x.paid)}</b></span></div></div>${pill}</div>`;
   }).join("");
-
   let settleBlock;
   if (isOpen()) {
     settleBlock = plan.length
-      ? `<h2>So wird ausgeglichen</h2><ul class="settle">${plan.map((s, i) => `<li>
-          <span class="txt"><strong>${esc(s.from)}</strong> zahlt <strong>${esc(s.to)}</strong> <span class="num">${fmt(s.amount)}</span></span>
-          <button class="ghost sm" type="button" data-settle="${i}">Erledigt</button></li>`).join("")}</ul>
+      ? `<h2>So wird ausgeglichen</h2>${plan.map((s, i) => `<div class="srow2">${av(s.from, "s")}<span class="txt"><b>${esc(s.from)}</b> <span class="arrow">→</span> <b>${esc(s.to)}</b><br><span class="num">${fmt(s.amount)}</span></span><button class="ghost sm" type="button" data-settle="${i}">Erledigt</button></div>`).join("")}
          <div class="btnrow"><button class="ghost sm" id="summary" type="button">Zwischenstand teilen</button></div>`
-      : `<h2>Alles ausgeglichen</h2><p class="sub">Es ist nichts mehr offen. Schließt die Abrechnung ab, dann bleibt die Endabrechnung so stehen und die Gruppe ist schreibgeschützt.</p>
-         <div class="btnrow"><button class="primary" id="closeGroup" type="button">Abrechnung abschließen</button><button class="ghost sm" id="summary" type="button">Zusammenfassung teilen</button></div>`;
+      : `<h2>🎉 Alles ausgeglichen</h2><p class="sub">Schließt die Abrechnung ab, dann bleibt die Endabrechnung so stehen.</p>
+         <div class="btnrow"><button class="primary" id="closeGroup" type="button">Abrechnung abschließen</button><button class="ghost sm" id="summary" type="button">Teilen</button></div>`;
   } else {
     const pays = active().filter(e => e.kind === "payment");
     settleBlock = `<h2>Endabrechnung</h2>
-      ${pays.length ? `<ul class="settle">${pays.map(p => `<li><span class="txt">${esc(p.paidBy)} → ${esc(p.shares[0].m)} <span class="num">${fmt(p.amount)}</span></span><span class="plus">✓ bezahlt</span></li>`).join("")}</ul>` : `<p class="sub">Es waren keine Rückzahlungen nötig.</p>`}
-      <div class="btnrow">
-        <button class="primary" id="summary" type="button">Zusammenfassung teilen</button>
-        ${status() === "closed"
-          ? `<button class="ghost sm" id="reopenGroup" type="button">Wieder öffnen</button><button class="ghost sm dangerline" id="archiveGroup" type="button">Gruppe löschen</button>`
-          : `<button class="ghost sm" id="restoreGroup" type="button">Wiederherstellen</button>`}
-      </div>`;
+      ${pays.length ? pays.map(p => `<div class="srow2">${av(p.paidBy, "s")}<span class="txt">${esc(p.paidBy)} → ${esc(p.shares[0].m)} <span class="num">${fmt(p.amount)}</span></span><span class="pill plus">✓</span></div>`).join("") : `<p class="sub">Es waren keine Rückzahlungen nötig.</p>`}
+      <div class="btnrow"><button class="primary" id="summary" type="button">Zusammenfassung teilen</button></div>`;
   }
-
-  return `
-    <section class="block">
-      <h2>Wer hat was?</h2>
-      <p class="sub">Gesamt ${fmt(total)} · ${n} Personen · Ø ${fmt(Math.round(total / n))}. Der Anteil berücksichtigt, wer bei welcher Ausgabe dabei war.</p>
-      ${rows}
-    </section>
-    <section class="block">${settleBlock}</section>
-    ${isOpen() ? `<section class="block">
-      <h2>Person hinzufügen</h2>
-      <form id="addMember" class="inline"><input name="name" maxlength="40" placeholder="Name" aria-label="Name"><button class="primary" type="submit">Hinzufügen</button></form>
-    </section>` : ""}`;
+  return `<div class="card"><h2>Wer hat was?</h2><p class="sub" style="margin:-4px 0 6px">Gesamt ${fmt(total)} · Ø ${fmt(Math.round(total / n))} pro Person</p>${rows}</div>
+    <div class="card">${settleBlock}</div>`;
 }
 
 function renderLog() {
-  const delPlan = state.plan.filter(p => p.deleted), delDocs = state.docs.filter(d => d.deleted);
   const canR = isOpen() && !!myName();
-  const travelDel = delPlan.length || delDocs.length ? `<section class="block"><h2>Gelöscht aus Reiseplan & Dokumenten</h2><ul class="loglist">
-    ${delPlan.map(p => `<li><div><b>${(PLAN_TYPES[p.type] || PLAN_TYPES.other).icon} ${esc(p.title)}</b><small>gelöscht${p.deletedBy ? ` von ${esc(p.deletedBy)}` : ""} ${fmtTime(p.deletedAt)}</small></div>${canR ? `<button class="ghost sm" type="button" data-restore-plan="${p.id}">Zurückholen</button>` : ""}</li>`).join("")}
-    ${delDocs.map(d => `<li><div><b>${docIcon(d)} ${esc(d.name)}</b><small>gelöscht${d.deletedBy ? ` von ${esc(d.deletedBy)}` : ""} ${fmtTime(d.deletedAt)}</small></div>${canR ? `<button class="ghost sm" type="button" data-restore-doc="${d.id}">Zurückholen</button>` : ""}</li>`).join("")}
-  </ul></section>` : "";
-  const del = state.expenses.filter(e => e.deleted);
-  const canRestore = e => isOpen() && !!myName() && (!!e.unlocked || isOwner(e) || e.deletedBy === myName());
-  const label = e => e.kind === "payment" ? `Rückzahlung ${esc(e.paidBy)} → ${esc(e.shares[0].m)}` : esc(e.desc);
-  return travelDel + (del.length ? `<section class="block"><h2>Gelöschte Ausgaben</h2><ul class="loglist">${del.map(e => `<li>
-      <div><b>${label(e)}</b> · ${fmt(e.amount)}<small>gelöscht${e.deletedBy ? ` von ${esc(e.deletedBy)}` : ""} ${fmtTime(e.deletedAt)}</small></div>
-      ${canRestore(e) ? `<button class="ghost sm" type="button" data-restore="${e.id}">Zurückholen</button>` : ""}</li>`).join("")}</ul></section>` : "") +
-    `<section class="block"><h2>Verlauf</h2>${state.log.length
+  const delE = state.expenses.filter(e => e.deleted), delP = state.plan.filter(p => p.deleted), delD = state.docs.filter(d => d.deleted);
+  const row = (label, x, attr) => `<li><div><b>${label}</b><small>gelöscht${x.deletedBy ? ` von ${esc(x.deletedBy)}` : ""} ${fmtTime(x.deletedAt)}</small></div>${canR ? `<button class="ghost sm" type="button" ${attr}="${x.id}">Zurückholen</button>` : ""}</li>`;
+  const dels = [
+    ...delE.map(e => row(`${e.kind === "payment" ? `Rückzahlung ${esc(e.paidBy)} → ${esc(e.shares[0].m)}` : esc(e.desc)} · ${fmt(e.amount)}`, e, "data-restore")),
+    ...delP.map(p => row(`${(PLAN_TYPES[p.type] || PLAN_TYPES.other).icon} ${esc(p.title)}`, p, "data-restore-plan")),
+    ...delD.map(d => row(`${docIcon(d)} ${esc(d.name)}`, d, "data-restore-doc"))];
+  return (dels.length ? `<div class="card"><h2>Gelöschte Einträge</h2><ul class="loglist">${dels.join("")}</ul></div>` : "") +
+    `<div class="card"><h2>Änderungen</h2>${state.log.length
       ? `<ul class="loglist">${state.log.map(l => `<li><div>${l.by ? `<b>${esc(l.by)}</b> ` : ""}${esc(l.text)}<small>${fmtTime(l.at)}</small></div></li>`).join("")}</ul>`
-      : `<p class="sub">Noch keine Einträge. Ab jetzt wird hier jede Änderung festgehalten.</p>`}</section>`;
+      : `<p class="sub">Noch keine Einträge.</p>`}</div>`;
 }
 
 function summaryText(st) {
   const g = state.group, total = totalSpent(), plan = settle(st);
-  const L = [`Fifty-Fifty · ${g.name} – ${isOpen() ? "Zwischenstand" : "Endabrechnung"}`, `Gesamtausgaben: ${fmt(total)} (${g.members.length} Personen)`, ""];
+  const L = [`${g.emoji || "🧳"} ${g.name} – ${isOpen() ? "Zwischenstand" : "Endabrechnung"}`, `Gesamtausgaben: ${fmt(total)} (${g.members.length} Personen)`, ""];
   g.members.forEach(m => L.push(`${m}: Anteil ${fmt(st[m].share)}, bezahlt ${fmt(st[m].paid)}`));
   L.push("");
   if (plan.length) { L.push("Noch offen:"); plan.forEach(s => L.push(`• ${s.from} → ${s.to}: ${fmt(s.amount)}`)); }
   else L.push("✓ Alles ausgeglichen.");
-  L.push("", location.href);
+  L.push("", groupUrl());
   return L.join("\n");
 }
 
 /* ---------- Ausgabe anlegen / bearbeiten ---------- */
 const dlg = $("#sheet"), F = $("#expForm");
 let sheet = null;
-
 function openSheet(e) {
   const g = state.group, me = myName();
   const editable = e ? canEdit(e) : isOpen();
   const owner = e ? isOwner(e) : true;
-  sheet = {
-    prev: e || null, editable,
-    mode: e && e.splitMode === "exact" ? "exact" : "equal",
-    sel: new Set(e ? e.shares.map(s => s.m) : g.members), exact: {}
-  };
+  sheet = { prev: e || null, editable, mode: e && e.splitMode === "exact" ? "exact" : "equal", sel: new Set(e ? e.shares.map(s => s.m) : g.members), exact: {} };
   if (e && e.splitMode === "exact") e.shares.forEach(s => sheet.exact[s.m] = centsToInput(s.c));
-  F.desc.value = e ? e.desc : "";
-  F.amount.value = e ? centsToInput(e.amount) : "";
-  F.date.value = e ? e.date : today();
+  F.desc.value = e ? e.desc : ""; F.amount.value = e ? centsToInput(e.amount) : ""; F.date.value = e ? e.date : today();
   const payer = e ? e.paidBy : (g.members.includes(me) ? me : g.members[0]);
   F.paidBy.innerHTML = g.members.map(m => `<option value="${esc(m)}" ${m === payer ? "selected" : ""}>${esc(m)}</option>`).join("");
-  $("#unlock").checked = !!(e && e.unlocked);
-  $("#unlock").disabled = !owner;
+  $("#unlock").checked = !!(e && e.unlocked); $("#unlock").disabled = !owner;
   $("#formFields").disabled = !editable;
   $("#sheetTitle").textContent = !e ? "Neue Ausgabe" : editable ? "Ausgabe bearbeiten" : "Ausgabe";
-  $("#ownerInfo").textContent = !e ? "Nur du kannst diese Ausgabe später ändern, außer du gibst sie frei."
-    : !isOpen() ? "Die Gruppe ist abgeschlossen. Einträge können nicht mehr geändert werden."
+  $("#ownerInfo").textContent = !e ? "" : !isOpen() ? "Die Gruppe ist abgeschlossen."
     : owner ? `Von dir eingetragen${e.updatedBy ? `, zuletzt geändert von ${e.updatedBy}` : ""}.`
-    : e.unlocked ? `Eingetragen von ${ownerOf(e)}, für alle freigegeben.`
-    : `Eingetragen von ${ownerOf(e)}. Nur ${ownerOf(e)} kann diese Ausgabe ändern oder löschen.`;
-  $("#del").hidden = !e || !editable;
-  $("#save").hidden = !editable;
+    : e.unlocked ? `Eingetragen von ${ownerOf(e)}, für alle freigegeben.` : `🔒 Eingetragen von ${ownerOf(e)}. Nur ${ownerOf(e)} kann sie ändern.`;
+  $("#del").hidden = !e || !editable; $("#save").hidden = !editable;
   $("#cancel").textContent = editable ? "Abbrechen" : "Schließen";
-  $("#formErr").textContent = "";
-  $("#save").disabled = false;
+  $("#formErr").textContent = ""; $("#save").disabled = false;
   setMode(sheet.mode);
   dlg.showModal();
-  if (!e) setTimeout(() => F.desc.focus(), 50);
+  if (!e) setTimeout(() => F.desc.focus(), 60);
 }
-
-function setMode(mode) {
-  sheet.mode = mode;
-  $$(".seg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === mode));
-  renderSplit();
-}
-
+function setMode(mode) { sheet.mode = mode; $$(".seg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === mode)); renderSplit(); }
 function renderSplit() {
-  const members = state.group.members;
-  const amount = toCents(F.amount.value) || 0;
+  const members = state.group.members, amount = toCents(F.amount.value) || 0;
   if (sheet.mode === "equal") {
     const n = members.filter(m => sheet.sel.has(m)).length;
-    $("#splitRows").innerHTML = members.map(m => `<label class="srow">
-      <input type="checkbox" data-m="${esc(m)}" ${sheet.sel.has(m) ? "checked" : ""}>
-      <span>${esc(m)}</span>
+    $("#splitRows").innerHTML = members.map(m => `<label class="srow"><input type="checkbox" data-m="${esc(m)}" ${sheet.sel.has(m) ? "checked" : ""}>${av(m, "s")}<span class="nm">${esc(m)}</span>
       <span class="amt">${sheet.sel.has(m) && amount > 0 && n ? fmt(Math.round(amount / n)) : ""}</span></label>`).join("");
   } else {
-    $("#splitRows").innerHTML = members.map(m => `<label class="srow">
-      <span>${esc(m)}</span>
-      <input inputmode="decimal" data-m="${esc(m)}" value="${esc(sheet.exact[m] || "")}" placeholder="0,00" autocomplete="off"></label>`).join("");
+    $("#splitRows").innerHTML = members.map(m => `<label class="srow">${av(m, "s")}<span class="nm">${esc(m)}</span><input inputmode="decimal" data-m="${esc(m)}" value="${esc(sheet.exact[m] || "")}" placeholder="0,00" autocomplete="off"></label>`).join("");
   }
   updateHint();
 }
-
 function updateHint() {
-  const amount = toCents(F.amount.value) || 0;
-  const h = $("#splitHint");
+  const amount = toCents(F.amount.value) || 0, h = $("#splitHint");
   if (sheet.mode === "equal") {
     const n = state.group.members.filter(m => sheet.sel.has(m)).length;
     h.textContent = n ? `Wird auf ${n} ${n === 1 ? "Person" : "Personen"} aufgeteilt.` : "Wähle mindestens eine Person aus.";
   } else {
-    const sum = state.group.members.reduce((s, m) => s + (toCents(sheet.exact[m] || "") || 0), 0);
-    const diff = amount - sum;
-    h.textContent = diff === 0 ? `Passt genau: ${fmt(sum)} verteilt.`
-      : diff > 0 ? `Noch ${fmt(diff)} zu verteilen.` : `${fmt(-diff)} zu viel verteilt.`;
+    const sum = state.group.members.reduce((s, m) => s + (toCents(sheet.exact[m] || "") || 0), 0), diff = amount - sum;
+    h.textContent = diff === 0 ? `Passt genau: ${fmt(sum)} verteilt.` : diff > 0 ? `Noch ${fmt(diff)} zu verteilen.` : `${fmt(-diff)} zu viel verteilt.`;
   }
 }
-
 $$(".seg button").forEach(b => b.onclick = () => setMode(b.dataset.mode));
 F.amount.addEventListener("input", () => sheet.mode === "equal" ? renderSplit() : updateHint());
 $("#splitRows").addEventListener("input", e => {
-  const m = e.target.dataset.m;
-  if (m == null) return;
+  const m = e.target.dataset.m; if (m == null) return;
   if (e.target.type === "checkbox") { e.target.checked ? sheet.sel.add(m) : sheet.sel.delete(m); renderSplit(); }
   else { sheet.exact[m] = e.target.value; updateHint(); }
 });
 $("#cancel").onclick = () => dlg.close();
-dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
 $("#del").onclick = () => {
   const e = sheet.prev;
-  if (!e || !canEdit(e) || !confirm(`„${e.desc}“ löschen? Der Eintrag bleibt im Verlauf sichtbar und kann zurückgeholt werden.`)) return;
-  commit(b => b.update(expRef().doc(e.id), { deleted: true, deletedAt: Date.now(), deletedBy: myName() }),
-    `hat „${e.desc}“ (${fmt(e.amount)}) gelöscht`).then(() => toast("Ausgabe gelöscht"));
+  if (!e || !canEdit(e) || !confirm(`„${e.desc}“ löschen? Der Eintrag bleibt im Verlauf und kann zurückgeholt werden.`)) return;
+  commit(b => b.update(expRef().doc(e.id), { deleted: true, deletedAt: Date.now(), deletedBy: myName() }), `hat „${e.desc}“ (${fmt(e.amount)}) gelöscht`).then(() => toast("Ausgabe gelöscht"));
   dlg.close();
 };
-
 F.onsubmit = e => {
   e.preventDefault();
   if (!sheet.editable) return;
   const err = msg => { $("#formErr").textContent = msg; };
-  const desc = F.desc.value.trim();
-  const amount = toCents(F.amount.value);
-  const members = state.group.members;
+  const desc = F.desc.value.trim(), amount = toCents(F.amount.value), members = state.group.members;
   if (!desc) return err("Wofür war die Ausgabe?");
   if (!(amount > 0)) return err("Gib einen gültigen Betrag ein, z. B. 12,50.");
   if (!F.date.value) return err("Wähle ein Datum.");
-
   let shares;
   if (sheet.mode === "equal") {
     const sel = members.filter(m => sheet.sel.has(m));
@@ -993,15 +1056,10 @@ F.onsubmit = e => {
     const sum = shares.reduce((s, x) => s + x.c, 0);
     if (sum !== amount) return err(`Die Einzelbeträge ergeben ${fmt(sum)}, die Ausgabe ist ${fmt(amount)}.`);
   }
-
-  const prev = sheet.prev, me = myName();
-  const owner = prev ? isOwner(prev) : true;
+  const prev = sheet.prev, me = myName(), owner = prev ? isOwner(prev) : true;
   const unlocked = owner ? $("#unlock").checked : !!prev.unlocked;
-  const data = {
-    kind: "expense", desc, amount, date: F.date.value, paidBy: F.paidBy.value, shares, splitMode: sheet.mode,
-    createdAt: prev ? (prev.createdAt || Date.now()) : Date.now(),
-    createdBy: prev ? ownerOf(prev) : me, unlocked, deleted: false
-  };
+  const data = { kind: "expense", desc, amount, date: F.date.value, paidBy: F.paidBy.value, shares, splitMode: sheet.mode,
+    createdAt: prev ? (prev.createdAt || Date.now()) : Date.now(), createdBy: prev ? ownerOf(prev) : me, unlocked, deleted: false };
   if (prev) { data.updatedAt = Date.now(); data.updatedBy = me; }
   let text;
   if (!prev) text = `hat „${desc}“ (${fmt(amount)}) hinzugefügt`;
@@ -1017,12 +1075,11 @@ F.onsubmit = e => {
   $("#save").disabled = true;
   commit(b => b.set(ref, data), text);
   dlg.close();
+  if (state.tab !== "ausgaben" && state.tab !== "abrechnung") { state.tab = "ausgaben"; }
   toast(prev ? "Änderung gespeichert" : "Ausgabe gespeichert");
 };
 
 /* ---------- Reiseplan ---------- */
-const planRef = () => groupRef().collection("plan");
-const docsRef = () => groupRef().collection("docs");
 const PLAN_TYPES = {
   flight:   { icon: "✈️", label: "Flug",        ph: "z. B. Flug München → Bari" },
   hotel:    { icon: "🏨", label: "Unterkunft",  ph: "z. B. Ferienwohnung Altstadt" },
@@ -1035,26 +1092,24 @@ const activePlan = () => state.plan.filter(p => !p.deleted);
 const activeDocs = () => state.docs.filter(d => !d.deleted);
 const dayDiff = d => Math.round((Date.parse(d + "T00:00") - Date.parse(today() + "T00:00")) / 864e5);
 const mapsUrl = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
-const fmtShortDay = d => d ? new Date(d + "T00:00").toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" }) : "";
 
-function countdown() {
+function countdownInfo() {
   const ds = activePlan().filter(p => p.date);
   if (!ds.length) return "";
   const start = ds.map(p => p.date).sort()[0];
   const end = ds.map(p => p.endDate || p.date).sort().slice(-1)[0];
   const toStart = dayDiff(start), toEnd = dayDiff(end);
-  if (toStart > 1) return `<div class="countdown"><b>${toStart}</b><span>Tage bis zur Reise</span></div>`;
-  if (toStart === 1) return `<div class="countdown"><b>Morgen</b><span>geht’s los!</span></div>`;
-  if (toEnd >= 0) return `<div class="countdown"><b>Tag ${1 - toStart}</b><span>von ${toEnd - toStart + 1}</span></div>`;
+  if (toStart > 1) return `noch ${toStart} Tage`;
+  if (toStart === 1) return "morgen geht’s los";
+  if (toEnd >= 0) return `Tag ${1 - toStart} von ${toEnd - toStart + 1}`;
   return "";
 }
 
 function renderPlan() {
   const items = activePlan().sort((a, b) => ((a.date || "9999") + (a.time || "99:99")).localeCompare((b.date || "9999") + (b.time || "99:99")));
   const docs = activeDocs();
-  let html = countdown();
-  if (isOpen()) html += `<button class="primary addline" id="addPlan" type="button">+ Programmpunkt</button>`;
-  if (!items.length) return html + `<div class="empty"><p>Noch nichts geplant. Trag Flüge, Unterkunft oder Ausflüge ein und häng die passenden Tickets an.</p></div>`;
+  let html = "";
+  if (!items.length) return `<div class="empty"><span class="big">🗓️</span><p>Noch nichts geplant. Tippe auf <b>+</b> und trag Flüge, Unterkunft oder Ausflüge ein. Tickets kannst du gleich anhängen.</p></div>`;
   html += `<ul class="list">`;
   let last = null;
   for (const p of items) {
@@ -1093,17 +1148,13 @@ function renderDocs() {
   const docs = activeDocs().sort((a, b) => b.createdAt - a.createdAt);
   const off = store.get(offlineKey(), []);
   const plan = activePlan();
-  let html = `<div class="note">🔒 Jeder mit dem Gruppen-Link kann Dokumente sehen. Lade Buchungen und Tickets hoch, aber keine Reisepässe oder Ausweise.</div>`;
-  if (isOpen()) html += `<label class="primary addline upbtn">+ Dokument hinzufügen<input type="file" id="docUpload" accept="image/*,application/pdf,*/*" hidden></label>`;
-  html += `<p id="upState" class="hint" role="status"></p>`;
-  if (!docs.length) return html + `<div class="empty"><p>Noch keine Dokumente. Bordkarten, Hotelbestätigungen oder Tickets lassen sich als Foto oder PDF ablegen.</p></div>`;
+  let html = `<div class="note">🔒 Jeder mit dem Gruppen-Link kann Dokumente sehen. Lade Buchungen und Tickets hoch, aber keine Ausweise oder Reisepässe.</div><p id="upState" class="hint" role="status"></p>`;
+  if (!docs.length) return html + `<div class="empty"><span class="big">📄</span><p>Noch keine Dokumente. Tippe auf <b>+</b> und lade Bordkarten, Hotelbestätigungen oder Tickets als Foto oder PDF hoch.</p></div>`;
   html += `<ul class="list">${docs.map(d => {
     const used = plan.filter(p => (p.docIds || []).includes(d.id)).map(p => p.title);
-    return `<li><button class="item" type="button" data-doc="${d.id}">
-      <span class="picon" aria-hidden="true">${docIcon(d)}</span>
-      <span class="txt"><strong>${esc(d.name)}</strong><small>${fmtSize(d.size)} · von ${esc(d.createdBy || "?")}${used.length ? ` · zu: ${esc(used.join(", "))}` : ""}</small></span>
-      ${off.includes(d.id) ? `<span class="offl" title="Offline verfügbar">✓ offline</span>` : ""}
-    </button></li>`; }).join("")}</ul>
+    return `<li><button class="item" type="button" data-doc="${d.id}"><span class="picon" aria-hidden="true">${docIcon(d)}</span>
+      <span class="txt"><strong>${esc(d.name)}</strong><small>${fmtSize(d.size)} · von ${esc(d.createdBy || "?")}${used.length ? ` · ${esc(used.join(", "))}` : ""}</small></span>
+      ${off.includes(d.id) ? `<span class="offl" title="Offline verfügbar">✓ offline</span>` : ""}</button></li>`; }).join("")}</ul>
     <div class="btnrow"><button class="ghost sm" id="allOffline" type="button">Alle offline verfügbar machen</button></div>`;
   return html;
 }
@@ -1230,7 +1281,7 @@ function setPlanType(t) {
 function renderPlanDocs() {
   const docs = activeDocs();
   $("#planDocs").innerHTML = docs.length
-    ? docs.map(d => `<label class="srow"><input type="checkbox" data-pd="${d.id}" ${psheet.docs.has(d.id) ? "checked" : ""}><span>${docIcon(d)} ${esc(d.name)}</span></label>`).join("")
+    ? docs.map(d => `<label class="srow"><input type="checkbox" data-pd="${d.id}" ${psheet.docs.has(d.id) ? "checked" : ""}><span class="nm">${docIcon(d)} ${esc(d.name)}</span></label>`).join("")
     : `<p class="hint">Noch keine Dokumente in dieser Gruppe.</p>`;
 }
 function openPlan(p) {
@@ -1264,7 +1315,6 @@ $("#planUpload").addEventListener("change", async e => {
   setTimeout(renderPlanDocs, 300);
 });
 $("#planCancel").onclick = () => planDlg.close();
-planDlg.addEventListener("click", e => { if (e.target === planDlg) planDlg.close(); });
 $("#planDel").onclick = () => {
   const p = psheet.prev; if (!p || !confirm(`„${p.title}“ aus dem Reiseplan löschen?`)) return;
   commit(b => b.update(planRef().doc(p.id), { deleted: true, deletedAt: Date.now(), deletedBy: myName() }), `hat „${p.title}“ aus dem Reiseplan gelöscht`);
@@ -1290,18 +1340,8 @@ PF.onsubmit = e => {
 };
 
 function bindTravel() {
-  const ap = $("#addPlan"); if (ap) ap.onclick = () => { if (!needMe()) openPlan(); };
   $$("[data-plan]").forEach(b => b.onclick = () => openPlan(state.plan.find(p => p.id === b.dataset.plan)));
   $$("main [data-doc]").forEach(b => b.onclick = () => openDoc(b.dataset.doc));
-  const up = $("#docUpload");
-  if (up) up.parentElement.onclick = e => { if (e.target === up) return; if (needMe()) e.preventDefault(); };
-  if (up) up.onchange = async e => {
-    if (needMe()) { e.target.value = ""; return; }
-    const files = [...e.target.files]; e.target.value = "";
-    const st = $("#upState");
-    for (const f of files) { if (st) st.textContent = `Lade „${f.name}“ hoch …`; await uploadDoc(f); }
-    if (st) st.textContent = "";
-  };
   const ao = $("#allOffline");
   if (ao) ao.onclick = async () => {
     ao.disabled = true; ao.textContent = "Wird gespeichert …";
@@ -1311,6 +1351,11 @@ function bindTravel() {
     renderGroup();
   };
 }
+$("#docPick").onchange = async e => {
+  const files = [...e.target.files]; e.target.value = "";
+  for (const f of files) { const st = $("#upState"); if (st) st.textContent = `Lade „${f.name}“ hoch …`; await uploadDoc(f); }
+  const st = $("#upState"); if (st) st.textContent = "";
+};
 
 route();
 </script>
